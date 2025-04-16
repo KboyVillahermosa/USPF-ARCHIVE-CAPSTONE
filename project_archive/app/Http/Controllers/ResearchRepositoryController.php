@@ -163,4 +163,55 @@ class ResearchRepositoryController extends Controller {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+
+    /**
+     * Display a listing of the research repositories.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function index(Request $request)
+    {
+        // Get filter parameters
+        $department = $request->input('department');
+        $type = $request->input('type');
+        $search = $request->input('search');
+        
+        // Start with base query
+        $query = ResearchRepository::where('approved', 1);
+        
+        // Apply department filter if provided
+        if ($department) {
+            $query->where('department', $department);
+        }
+        
+        // Apply type filter if provided (faculty or student)
+        if ($type === 'faculty') {
+            $query->where('faculty_research', true);
+        } elseif ($type === 'student') {
+            $query->where(function($q) {
+                $q->whereNull('faculty_research')
+                  ->orWhere('faculty_research', false);
+            });
+        }
+        
+        // Apply search filter if provided
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('project_name', 'like', "%{$search}%")
+                  ->orWhere('members', 'like', "%{$search}%")
+                  ->orWhere('keywords', 'like', "%{$search}%");
+            });
+        }
+        
+        // Get results paginated
+        $projects = $query->latest()->paginate(12);
+        
+        // Get all departments for the filter dropdown
+        $departments = ResearchRepository::where('approved', 1)
+                        ->distinct()
+                        ->pluck('department');
+        
+        // Return the view with the filtered results
+        return view('research.index', compact('projects', 'departments', 'department', 'type', 'search'));
+    }
 }

@@ -80,33 +80,42 @@ Route::middleware('auth')->group(function () {
     Route::put('/faculty/research/{id}', [FacultyResearchController::class, 'update'])->name('faculty.research.update');
 });
 
-// Faculty Research routes
+// Research and Faculty Research Routes
 Route::middleware(['auth'])->group(function () {
-    // Change this route to match what's being accessed
-    Route::get('/faculty/research/create', [FacultyResearchController::class, 'create'])
-        ->name('research.faculty.create');
+    // Research index and search
+    Route::get('/research', [ResearchRepositoryController::class, 'index'])
+        ->name('research.index');
     
-    Route::post('/faculty/research/store', [FacultyResearchController::class, 'store'])
+    // Research view and download
+    Route::get('/research/{id}', [ResearchRepositoryController::class, 'show'])
+        ->name('research.show');
+    Route::post('/research/{id}/download', [ResearchController::class, 'download'])
+        ->name('research.download');
+    
+    // Student research upload
+    Route::get('/research/create', [ResearchRepositoryController::class, 'create'])
+        ->name('research.create');
+    Route::post('/research/store', [ResearchRepositoryController::class, 'store'])
+        ->name('research.store');
+    
+    // Faculty research upload
+    Route::get('/faculty-research/create', [FacultyResearchController::class, 'create'])
+        ->name('research.faculty.create');
+    Route::post('/faculty-research/store', [FacultyResearchController::class, 'store'])
         ->name('research.faculty.store');
     
-    // Research history
-    Route::get('/faculty/research/history', [FacultyResearchController::class, 'history'])
-        ->name('research.history');
-    
-    // Other faculty research routes
-    Route::get('/faculty/research/{id}', [FacultyResearchController::class, 'show'])
-        ->name('faculty.research.show');
-    
-    Route::get('/faculty/research/{id}/edit', [FacultyResearchController::class, 'edit'])
+    // Faculty research specific routes
+    Route::get('/faculty-research', [FacultyResearchController::class, 'index'])
+        ->name('faculty.research.index');
+    Route::get('/faculty-research/{id}/edit', [FacultyResearchController::class, 'edit'])
         ->name('faculty.research.edit');
-    
-    Route::put('/faculty/research/{id}', [FacultyResearchController::class, 'update'])
+    Route::put('/faculty-research/{id}', [FacultyResearchController::class, 'update'])
         ->name('faculty.research.update');
+    
+    // Research history
+    Route::get('/history', [HistoryController::class, 'index'])
+        ->name('history');
 });
-
-Route::get('/faculty-research', [\App\Http\Controllers\FacultyResearchController::class, 'index'])
-    ->name('faculty.research.index')
-    ->middleware(['auth']);
 
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/research', [ResearchRepositoryController::class, 'adminIndex'])
@@ -152,6 +161,8 @@ Route::get('/dissertations', [App\Http\Controllers\DissertationController::class
     ->name('dissertation.index');
 
 // Add this to your routes/web.php file
-Route::get('/research', [ResearchRepositoryController::class, 'index'])->name('research.index');
+Route::get('/research', [ResearchRepositoryController::class, 'index'])
+    ->name('research.index')
+    ->middleware(['auth']);
 
 require __DIR__.'/auth.php';

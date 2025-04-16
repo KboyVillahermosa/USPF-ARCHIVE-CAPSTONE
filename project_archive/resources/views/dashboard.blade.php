@@ -529,7 +529,7 @@
         </div>
     </div>
 
-    <!-- Faculty Research Section (New) -->
+    <!-- Faculty Research Section (Updated) -->
     <div class="py-16 bg-slate-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12" data-aos="fade-up">
@@ -538,77 +538,83 @@
             </div>
 
             @php
-                // Get faculty research
-                $facultyResearch = App\Models\ResearchRepository::where('faculty_research', true)
+                // Get faculty research grouped by department
+                $facultyResearchByDepartment = App\Models\ResearchRepository::where('faculty_research', true)
                     ->where('approved', 1)
-                    ->latest()
-                    ->take(6)
-                    ->get();
+                    ->get()
+                    ->groupBy('department');
             @endphp
 
-            @if($facultyResearch->isNotEmpty())
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    @foreach($facultyResearch as $project)
-                        <div class="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100"
-                             data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
-                            <div class="relative">
-                                @if($project->banner_image)
-                                    <img src="{{ asset('storage/' . $project->banner_image) }}" 
-                                         alt="Faculty Research Banner"
-                                         class="w-full h-48 object-cover transform hover:scale-105 transition-transform duration-300">
-                                @else
-                                    <div class="w-full h-48 bg-gradient-to-r from-purple-600 to-indigo-800 flex items-center justify-center">
-                                        <i class="fas fa-chalkboard-teacher text-6xl text-white opacity-30"></i>
-                                    </div>
-                                @endif
-                                <div class="absolute top-4 right-4 bg-purple-500 text-white px-3 py-1 rounded-full text-sm">
-                                    Faculty Research
-                                </div>
-                            </div>
-
-                            <div class="p-6">
-                                <h4 class="font-bold text-xl mb-3 text-gray-900 line-clamp-2">
-                                    {{ Str::limit($project->project_name, 60, '...') }}
-                                </h4>
-
-                                <div class="space-y-2 mb-4 text-gray-600 text-sm">
-                                    <p class="flex items-center">
-                                        <i class="fas fa-user-tie w-5 text-purple-500"></i>
-                                        <span class="ml-2">{{ Str::limit($project->members, 40, '...') }}</span>
-                                    </p>
-                                    <p class="flex items-center">
-                                        <i class="fas fa-building w-5 text-purple-500"></i>
-                                        <span class="ml-2">{{ $project->department }}</span>
-                                    </p>
-                                    <p class="flex items-center">
-                                        <i class="fas fa-calendar-alt w-5 text-purple-500"></i>
-                                        <span class="ml-2">{{ $project->created_at->format('F d, Y') }}</span>
-                                    </p>
-                                    <div class="flex justify-between mt-1">
-                                        <p class="flex items-center">
-                                            <i class="fas fa-eye w-5 text-gray-400"></i>
-                                            <span class="ml-2">{{ $project->view_count ?? 0 }}</span>
-                                        </p>
-                                        <p class="flex items-center">
-                                            <i class="fas fa-download w-5 text-gray-400"></i>
-                                            <span class="ml-2">{{ $project->download_count ?? 0 }}</span>
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <a href="{{ route('research.show', $project->id) }}"
-                                   class="inline-flex items-center justify-center w-full bg-gray-50 text-purple-500 px-4 py-2 rounded-lg hover:bg-purple-500 hover:text-white transition-colors duration-300 font-medium">
-                                    View Details
-                                    <i class="fas fa-arrow-right ml-2"></i>
-                                </a>
-                            </div>
+            @if($facultyResearchByDepartment->isNotEmpty())
+                @foreach($facultyResearchByDepartment as $department => $projects)
+                    <div class="mb-12" data-aos="fade-up">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-2xl font-bold text-gray-900">{{ $department }}</h3>
+                            <a href="{{ route('research.index', ['department' => $department, 'type' => 'faculty']) }}" 
+                               class="text-purple-500 hover:text-purple-600 font-medium">
+                                View All <i class="fas fa-arrow-right ml-2"></i>
+                            </a>
                         </div>
-                    @endforeach
-                </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            @foreach($projects->take(3) as $project)
+                                <div class="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100"
+                                     data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
+                                    <div class="relative">
+                                        @if($project->banner_image)
+                                            <img src="{{ asset('storage/' . $project->banner_image) }}" 
+                                                 alt="Faculty Research Banner"
+                                                 class="w-full h-48 object-cover transform hover:scale-105 transition-transform duration-300">
+                                        @else
+                                            <div class="w-full h-48 bg-gradient-to-r from-purple-600 to-indigo-800 flex items-center justify-center">
+                                                <i class="fas fa-chalkboard-teacher text-6xl text-white opacity-30"></i>
+                                            </div>
+                                        @endif
+                                        <div class="absolute top-4 right-4 bg-purple-500 text-white px-3 py-1 rounded-full text-sm">
+                                            Faculty Research
+                                        </div>
+                                    </div>
+
+                                    <div class="p-6">
+                                        <h4 class="font-bold text-xl mb-3 text-gray-900 line-clamp-2">
+                                            {{ Str::limit($project->project_name, 60, '...') }}
+                                        </h4>
+
+                                        <div class="space-y-2 mb-4 text-gray-600 text-sm">
+                                            <p class="flex items-center">
+                                                <i class="fas fa-user-tie w-5 text-purple-500"></i>
+                                                <span class="ml-2">{{ Str::limit($project->members, 40, '...') }}</span>
+                                            </p>
+                                            <p class="flex items-center">
+                                                <i class="fas fa-calendar-alt w-5 text-purple-500"></i>
+                                                <span class="ml-2">{{ $project->created_at->format('F d, Y') }}</span>
+                                            </p>
+                                            <div class="flex justify-between mt-1">
+                                                <p class="flex items-center">
+                                                    <i class="fas fa-eye w-5 text-gray-400"></i>
+                                                    <span class="ml-2">{{ $project->view_count ?? 0 }}</span>
+                                                </p>
+                                                <p class="flex items-center">
+                                                    <i class="fas fa-download w-5 text-gray-400"></i>
+                                                    <span class="ml-2">{{ $project->download_count ?? 0 }}</span>
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <a href="{{ route('research.show', $project->id) }}"
+                                           class="inline-flex items-center justify-center w-full bg-gray-50 text-purple-500 px-4 py-2 rounded-lg hover:bg-purple-500 hover:text-white transition-colors duration-300 font-medium">
+                                            View Details
+                                            <i class="fas fa-arrow-right ml-2"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endforeach
 
                 <!-- View All Faculty Research Button -->
                 <div class="text-center mt-10">
-                    <a href="{{ route('faculty.research.index') }}" 
+                    <a href="{{ route('research.index', ['type' => 'faculty']) }}" 
                        class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 transition-colors">
                         View All Faculty Research
                         <svg class="ml-2 -mr-1 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

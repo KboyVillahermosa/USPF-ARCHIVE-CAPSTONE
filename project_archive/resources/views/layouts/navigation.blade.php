@@ -52,6 +52,9 @@ class="border-b border-gray-100 z-50 w-full fixed top-0 transition-all duration-
                                 <x-dropdown-link :href="route('upload.dissertation')" :active="request()->routeIs('upload.dissertation')">
                                     {{ __('Dissertation/Thesis') }}
                                 </x-dropdown-link>
+                                <x-dropdown-link :href="route('research.faculty.create')" :active="request()->routeIs('research.faculty.create')">
+                                    {{ __('Faculty Research') }}
+                                </x-dropdown-link>
                             </x-slot>
                         </x-dropdown>
                     </div>

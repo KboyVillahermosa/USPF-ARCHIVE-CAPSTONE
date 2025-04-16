@@ -26,3 +26,9 @@
         @endif
     </a>
 </li>
+
+<li class="nav-item">
+    <a class="nav-link" href="{{ backpack_url('faculty-research') }}">
+        <i class="nav-icon la la-graduation-cap"></i> Faculty Research
+    </a>
+</li>

@@ -62,7 +62,51 @@ Route::middleware('auth')->group(function () {
 
     // Shared history view showing all submissions
     Route::get('/history', [HistoryController::class, 'index'])->name('history');
+
+    // Faculty research upload routes
+    Route::get('/faculty-research/create', [App\Http\Controllers\FacultyResearchController::class, 'create'])
+        ->name('research.faculty.create');
+    Route::post('/faculty-research/store', [App\Http\Controllers\FacultyResearchController::class, 'store'])
+        ->name('research.faculty.store');
+    Route::get('/research/history', [App\Http\Controllers\ResearchController::class, 'history'])
+        ->name('research.history');
+
+    // Faculty Research routes
+    Route::get('/faculty/research/create', [FacultyResearchController::class, 'create'])->name('research.faculty.create');
+    Route::post('/faculty/research/store', [FacultyResearchController::class, 'store'])->name('research.faculty.store');
+    Route::get('/faculty/research/history', [FacultyResearchController::class, 'history'])->name('research.history');
+    Route::get('/faculty/research/{id}', [FacultyResearchController::class, 'show'])->name('faculty.research.show');
+    Route::get('/faculty/research/{id}/edit', [FacultyResearchController::class, 'edit'])->name('faculty.research.edit');
+    Route::put('/faculty/research/{id}', [FacultyResearchController::class, 'update'])->name('faculty.research.update');
 });
+
+// Faculty Research routes
+Route::middleware(['auth'])->group(function () {
+    // Change this route to match what's being accessed
+    Route::get('/faculty/research/create', [FacultyResearchController::class, 'create'])
+        ->name('research.faculty.create');
+    
+    Route::post('/faculty/research/store', [FacultyResearchController::class, 'store'])
+        ->name('research.faculty.store');
+    
+    // Research history
+    Route::get('/faculty/research/history', [FacultyResearchController::class, 'history'])
+        ->name('research.history');
+    
+    // Other faculty research routes
+    Route::get('/faculty/research/{id}', [FacultyResearchController::class, 'show'])
+        ->name('faculty.research.show');
+    
+    Route::get('/faculty/research/{id}/edit', [FacultyResearchController::class, 'edit'])
+        ->name('faculty.research.edit');
+    
+    Route::put('/faculty/research/{id}', [FacultyResearchController::class, 'update'])
+        ->name('faculty.research.update');
+});
+
+Route::get('/faculty-research', [\App\Http\Controllers\FacultyResearchController::class, 'index'])
+    ->name('faculty.research.index')
+    ->middleware(['auth']);
 
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/research', [ResearchRepositoryController::class, 'adminIndex'])

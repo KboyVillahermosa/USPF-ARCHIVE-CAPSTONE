@@ -5,3 +5,4 @@
 <x-backpack::menu-item title="Research repositories" icon="la la-question" :link="backpack_url('research-repository')" />
 <x-backpack::menu-item title="Dissertations" icon="la la-question" :link="backpack_url('dissertation')" />
 <x-backpack::menu-item title="Theses" icon="la la-question" :link="backpack_url('thesis')" />
+<x-backpack::menu-item title="Faculties" icon="la la-question" :link="backpack_url('faculty')" />

@@ -196,9 +196,9 @@ class="border-b border-gray-100 z-50 w-full fixed top-0 transition-all duration-
                 {{ __('Student Research Upload') }}
             </x-responsive-nav-link>
             
-            <x-responsive-nav-link :href="route('upload.faculty')" :active="request()->routeIs('upload.faculty')">
-                {{ __('Faculty Research Upload') }}
-            </x-responsive-nav-link>
+            <x-dropdown-link :href="route('upload.faculty')" :active="request()->routeIs('upload.faculty')">
+                                    {{ __('Faculty Research') }}
+                                </x-dropdown-link>
             
             <x-responsive-nav-link :href="route('upload.dissertation')" :active="request()->routeIs('upload.dissertation')">
                 {{ __('Dissertation/Thesis Upload') }}

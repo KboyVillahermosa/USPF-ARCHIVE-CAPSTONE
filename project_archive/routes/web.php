@@ -187,4 +187,6 @@ Route::get('/research', [ResearchRepositoryController::class, 'index'])
     ->name('research.index')
     ->middleware(['auth']);
 
+Route::get('/faculty/research/create', [FacultyResearchController::class, 'create'])->name('faculty.research.create');
+
 require __DIR__.'/auth.php';

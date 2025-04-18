@@ -328,32 +328,20 @@
                                 <h2 class="text-2xl font-bold text-gray-900">Dissertation Document</h2>
                             </div>
 
-                            @if(isset($fileExists) && $fileExists)
+                            @if(File::exists(storage_path('app/public/' . $dissertation->file_path)))
                                 <div class="bg-white shadow-lg rounded-lg border border-gray-200">
-                                    <!-- PDF Viewer Toolbar -->
-                                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 sticky top-0 z-10">
-                                        <!-- Toolbar content -->
-                                    </div>
-
-                                    <!-- PDF Viewer with TOC Sidebar -->
-                                    <div class="flex w-full relative">
-                                        <!-- TOC Sidebar -->
-                                        
-                                        <!-- PDF Viewer Container -->
-                                        <div id="pdfContainer" class="relative flex-1">
-                                            <!-- Loading overlay -->
-                                            <div id="pdfLoadingOverlay" class="absolute inset-0 flex flex-col items-center justify-center bg-white bg-opacity-90 z-10">
-                                                <div class="w-16 h-16 border-4 border-blue-400 border-t-blue-600 rounded-full animate-spin mb-4"></div>
-                                                <p class="text-gray-700">Loading document...</p>
-                                            </div>
-                                            <div class="w-full h-[600px] bg-gray-100">
-                                                <!-- Replace the iframe with an embed tag for better PDF rendering compatibility -->
-                                                <embed id="pdfViewer"
-                                                    src="{{ asset('storage/' . $dissertation->file_path) }}#toolbar=0"
-                                                    class="w-full h-full"
-                                                    type="application/pdf"
-                                                    alt="PDF is not available">
-                                            </div>
+                                    <div id="pdfContainer" class="relative flex-1">
+                                        <div id="pdfLoadingOverlay" class="absolute inset-0 flex flex-col items-center justify-center bg-white bg-opacity-90 z-10">
+                                            <div class="w-16 h-16 border-4 border-blue-400 border-t-blue-600 rounded-full animate-spin mb-4"></div>
+                                            <p class="text-gray-700">Loading document...</p>
+                                        </div>
+                                        <div class="w-full h-[600px] bg-gray-100">
+                                            <embed 
+                                                src="{{ asset('storage/' . $dissertation->file_path) }}#toolbar=1&navpanes=1&scrollbar=1" 
+                                                type="application/pdf"
+                                                width="100%"
+                                                height="600px"
+                                                class="w-full h-[600px]">
                                         </div>
                                     </div>
                                 </div>
@@ -380,6 +368,20 @@
                                             <p><strong>Public URL:</strong> {{ $publicUrl }}</p>
                                         </div>
                                     @endif
+
+                                    <div class="p-4 bg-gray-100 rounded-lg">
+                                        <p>File path: {{ $dissertation->file_path }}</p>
+                                        <p>Full path: {{ storage_path('app/public/' . $dissertation->file_path) }}</p>
+                                        <p>Exists: {{ File::exists(storage_path('app/public/' . $dissertation->file_path)) ? 'Yes' : 'No' }}</p>
+                                    </div>
+
+                                    <div class="p-4 bg-gray-100 rounded-lg mb-4">
+                                        <p><strong>Debug Info:</strong></p>
+                                        <p>File path: {{ $dissertation->file_path }}</p>
+                                        <p>Asset URL: {{ asset('storage/' . $dissertation->file_path) }}</p>
+                                        <p>Direct URL attempt: <a href="{{ asset('storage/' . $dissertation->file_path) }}" target="_blank">Click to test direct access</a></p>
+                                        <p>Exists check: {{ File::exists(storage_path('app/public/' . $dissertation->file_path)) ? 'Yes' : 'No' }}</p>
+                                    </div>
                                 </div>
                             @endif
                         </div>
@@ -421,6 +423,30 @@
 
                                 <div class="bg-gray-50 p-5 rounded-lg">
                                     <div class="flex justify-between items-center mb-2">
+                                        <h3 class="font-semibold text-lg">IEEE Format</h3>
+                                        <button onclick="copyCitation('ieee-citation')" class="text-blue-600 hover:text-blue-800 text-sm flex items-center">
+                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                            </svg>
+                                            Copy
+                                        </button>
+                                    </div>
+                                    <div id="ieee-citation" class="bg-white p-4 rounded border border-gray-200 text-gray-700">
+                                        @php
+                                            // Format IEEE citation (just initials, no last name first)
+                                            $authorParts = array_map('trim', explode(' ', $dissertation->author));
+                                            $firstInitials = array_map(function($part) {
+                                                return strtoupper(substr($part, 0, 1)) . '.';
+                                            }, array_slice($authorParts, 0, -1));
+                                            $lastName = end($authorParts);
+                                            $ieeeAuthor = implode(' ', $firstInitials) . ' ' . $lastName;
+                                        @endphp
+                                        [1] {{ $ieeeAuthor }}, "{{ $dissertation->title }}," {{ ucfirst($dissertation->type) }}, {{ $dissertation->department }}, {{ $dissertation->year }}.
+                                    </div>
+                                </div>
+
+                                <div class="bg-gray-50 p-5 rounded-lg">
+                                    <div class="flex justify-between items-center mb-2">
                                         <h3 class="font-semibold text-lg">MLA Format</h3>
                                         <button onclick="copyCitation('mla-citation')" class="text-blue-600 hover:text-blue-800 text-sm flex items-center">
                                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -438,27 +464,6 @@
                                             $formattedAuthorMLA = $lastName . ', ' . $firstName;
                                         @endphp
                                         {{ $formattedAuthorMLA }}. "<em>{{ $dissertation->title }}</em>." 
-                                        {{ ucfirst($dissertation->type) }}, {{ $dissertation->department }}, 
-                                        {{ $dissertation->year }}.
-                                    </div>
-                                </div>
-
-                                <div class="bg-gray-50 p-5 rounded-lg">
-                                    <div class="flex justify-between items-center mb-2">
-                                        <h3 class="font-semibold text-lg">Chicago Format</h3>
-                                        <button onclick="copyCitation('chicago-citation')" class="text-blue-600 hover:text-blue-800 text-sm flex items-center">
-                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-                                            </svg>
-                                            Copy
-                                        </button>
-                                    </div>
-                                    <div id="chicago-citation" class="bg-white p-4 rounded border border-gray-200 text-gray-700">
-                                        @php
-                                            // Use the same author format as MLA for Chicago
-                                            $authorChicago = $formattedAuthorMLA;
-                                        @endphp
-                                        {{ $authorChicago }}. "{{ $dissertation->title }}." 
                                         {{ ucfirst($dissertation->type) }}, {{ $dissertation->department }}, 
                                         {{ $dissertation->year }}.
                                     </div>
@@ -846,8 +851,8 @@
                 const checkPDFLoaded = setInterval(() => {
                     const embedContent = document.querySelector('#pdfViewer');
                     if (embedContent) {
-                        if (embedContent.contentDocument && embedContent.contentDocument.body && 
-                            embedContent.contentDocument.body.childElementCount > 0) {
+                        if (embedContent.contentDocument && embedContent.body && 
+                            embedContent.body.childElementCount > 0) {
                             loadingOverlay.classList.add('hidden');
                             clearInterval(checkPDFLoaded);
                         }

@@ -65,4 +65,9 @@ class User extends Authenticatable
         // Assuming you have a 'role' column in your users table
         return $this->role === $role;
     }
+    public function isAdmin()
+    {
+        // Check if the user has the admin role
+        return $this->hasRole('admin');
+    }
 }

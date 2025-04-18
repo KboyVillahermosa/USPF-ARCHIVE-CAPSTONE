@@ -56,27 +56,24 @@ class DissertationController extends Controller
     public function show($id)
     {
         $dissertation = Dissertation::findOrFail($id);
-        
-        // Check if user is authorized to view this
-        if ($dissertation->user_id != Auth::id() && !Auth::user()->isAdmin()) {
-            abort(403, 'Unauthorized action.');
+        $user = auth()->user();
+
+        // Check if dissertation is approved or if user is admin or owner
+        if ($dissertation->status === 'approved' || 
+            $user->isAdmin() || 
+            $dissertation->user_id === $user->id) {
+            
+            // Increment view count only if the viewer is not the owner
+            if ($dissertation->user_id !== $user->id) {
+                $dissertation->increment('view_count');
+            }
+            
+            // Change this line from 'dissertations.show' to 'dissertation.show'
+            return view('dissertation.show', compact('dissertation'));
         }
         
-        // Check if the file exists and pass this information to the view
-        $fileExists = Storage::disk('public')->exists($dissertation->file_path);
-        
-        // Debug information - can be removed in production
-        $storagePath = storage_path('app/public/' . $dissertation->file_path);
-        $publicUrl = asset('storage/' . $dissertation->file_path);
-        
-        // Only try to increment if the column exists in the database
-        try {
-            $dissertation->increment('view_count');
-        } catch (\Exception $e) {
-            // Silently fail if the column doesn't exist yet
-        }
-        
-        return view('dissertation.show', compact('dissertation', 'fileExists', 'storagePath', 'publicUrl'));
+        // If dissertation is not approved and user is not admin or owner
+        return abort(403, 'Unauthorized action.');
     }
 
     public function history()

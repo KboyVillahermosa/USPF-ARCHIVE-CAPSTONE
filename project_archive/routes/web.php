@@ -10,7 +10,29 @@ use App\Http\Controllers\DissertationController;
 use App\Http\Controllers\HistoryController;
 
 Route::get('/', function () {
-    return view('welcome');
+    // Get the same data as the dashboard but limit results for guests
+    $recentSubmissions = App\Models\ResearchRepository::where('approved', 1)
+        ->orderBy('created_at', 'desc')
+        ->get();
+        
+    $mostViewedSubmissions = App\Models\ResearchRepository::where('approved', 1)
+        ->orderBy('view_count', 'desc')
+        ->get();
+        
+    $mostPopularSubmissions = App\Models\ResearchRepository::where('approved', 1)
+        ->orderBy('download_count', 'desc')
+        ->get();
+        
+    $departments = App\Models\ResearchRepository::where('approved', 1)
+        ->get()
+        ->groupBy('department');
+        
+    return view('welcome', compact(
+        'recentSubmissions',
+        'mostViewedSubmissions',
+        'mostPopularSubmissions',
+        'departments'
+    ));
 });
 
 Route::get('/dashboard', function () {

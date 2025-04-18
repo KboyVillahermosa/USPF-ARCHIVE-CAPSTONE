@@ -18,34 +18,39 @@
     <body class="font-sans antialiased bg-gray-50">
         <div class="min-h-screen">
             <!-- Navigation -->
-            <nav x-data="{ open: false }" class="bg-white border-b border-gray-100 fixed w-full z-50">
+            <nav x-data="{ open: false }" class="bg-white border-b border-gray-100 fixed w-full z-50 shadow-sm">
                 <!-- Primary Navigation Menu -->
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between h-16">
                         <div class="flex">
                             <!-- Logo -->
                             <div class="shrink-0 flex items-center">
-                                <a href="{{ route('dashboard') }}" class="text-xl font-bold text-blue-600">
-                                    USPF Research Repository
+                                <a href="/" class="flex items-center">
+                                    <img src="{{ asset('images/logo-uspf.png') }}" alt="USPF Logo" class="h-10 mr-3">
+                                    <span class="text-lg font-bold text-gray-900">Research Repository</span>
                                 </a>
                             </div>
                         </div>
 
-                        <div class="hidden sm:flex sm:items-center sm:ml-6">
-                            <!-- Authentication -->
-                            @if (Route::has('login'))
-                                <div class="flex space-x-4">
-                                    @auth
-                                        <a href="{{ url('/dashboard') }}" class="text-sm text-gray-700 hover:text-blue-600">Dashboard</a>
-                                    @else
-                                        <a href="{{ route('login') }}" class="text-sm text-gray-700 hover:text-blue-600">Log in</a>
-
-                                        @if (Route::has('register'))
-                                            <a href="{{ route('register') }}" class="text-sm text-gray-700 hover:text-blue-600">Register</a>
-                                        @endif
-                                    @endauth
-                                </div>
-                            @endif
+                        <div class="hidden sm:flex sm:items-center">
+                            <!-- Main Navigation Links -->
+                            <div class="flex space-x-6">
+                                <a href="#about" class="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors duration-200 px-3 py-2 rounded-md hover:bg-gray-50">About</a>
+                                <a href="#featured" class="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors duration-200 px-3 py-2 rounded-md hover:bg-gray-50">Featured Research</a>
+                                <a href="#departments" class="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors duration-200 px-3 py-2 rounded-md hover:bg-gray-50">Departments</a>
+                                <a href="#academic" class="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors duration-200 px-3 py-2 rounded-md hover:bg-gray-50">Academic Works</a>
+                            </div>
+                            
+                            <!-- Login/Admin Button -->
+                            <div class="ml-6 pl-6 border-l border-gray-200">
+                                <a href="{{ route('login') }}" 
+                                   class="inline-flex items-center justify-center px-4 py-2 border border-blue-600 text-sm font-medium rounded-md text-blue-600 bg-white hover:bg-blue-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                                    </svg>
+                                    Login
+                                </a>
+                            </div>
                         </div>
 
                         <!-- Hamburger -->
@@ -62,26 +67,30 @@
 
                 <!-- Responsive Navigation Menu -->
                 <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
-                    <!-- Responsive Settings Options -->
-                    <div class="pt-4 pb-1 border-t border-gray-200">
-                        <div class="mt-3 space-y-1">
-                            @if (Route::has('login'))
-                                @auth
-                                    <x-responsive-nav-link href="{{ url('/dashboard') }}" :active="request()->routeIs('dashboard')">
-                                        {{ __('Dashboard') }}
-                                    </x-responsive-nav-link>
-                                @else
-                                    <x-responsive-nav-link href="{{ route('login') }}" :active="request()->routeIs('login')">
-                                        {{ __('Log in') }}
-                                    </x-responsive-nav-link>
-                                    
-                                    @if (Route::has('register'))
-                                        <x-responsive-nav-link href="{{ route('register') }}" :active="request()->routeIs('register')">
-                                            {{ __('Register') }}
-                                        </x-responsive-nav-link>
-                                    @endif
-                                @endauth
-                            @endif
+                    <div class="pt-2 pb-3 space-y-1">
+                        <x-responsive-nav-link href="#about" class="block px-4 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
+                            {{ __('About') }}
+                        </x-responsive-nav-link>
+                        <x-responsive-nav-link href="#featured" class="block px-4 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
+                            {{ __('Featured Research') }}
+                        </x-responsive-nav-link>
+                        <x-responsive-nav-link href="#departments" class="block px-4 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
+                            {{ __('Departments') }}
+                        </x-responsive-nav-link>
+                        <x-responsive-nav-link href="#academic" class="block px-4 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
+                            {{ __('Academic Works') }}
+                        </x-responsive-nav-link>
+                    </div>
+                    
+                    <!-- Mobile Login Button -->
+                    <div class="pt-2 pb-3 border-t border-gray-200">
+                        <div class="mt-3 space-y-1 px-4">
+                            <a href="{{ route('login') }}" class="block px-4 py-2 text-base font-medium text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-md">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                                </svg>
+                                Login
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -89,7 +98,7 @@
 
             <main class="pt-16">
                 <!-- Hero Section with Parallax Effect -->
-                <div class="relative h-[100vh] bg-gradient-to-r from-blue-900/95 to-blue-800/90 pt-16 overflow-hidden">
+                <div id="about" class="relative h-[100vh] bg-gradient-to-r from-blue-900/95 to-blue-800/90 pt-16 overflow-hidden">
                     <div class="absolute inset-0 z-0">
                         <div x-data="carousel" class="relative w-full h-full">
                             <!-- Carousel slides -->
@@ -102,10 +111,10 @@
                                      x-transition:leave-start="opacity-100 transform scale-100"
                                      x-transition:leave-end="opacity-0 transform scale-95"
                                      class="absolute inset-0">
-                                    <div class="absolute inset-0 bg-black/90"></div>
-                                    <div class="absolute inset-0 bg-gradient-to-b from-black/90 to-black/90"></div>
+                                    <div class="absolute inset-0 bg-black/70"></div>
+                                    <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-blue-900/40 to-black/70"></div>
                                     <img :src="slide.image" :alt="slide.alt" 
-                                         class="w-full h-full object-cover transform scale-105 opacity-75">
+                                         class="w-full h-full object-cover transform scale-105 opacity-80">
                                 </div>
                             </template>
 
@@ -123,38 +132,27 @@
 
                     <div class="relative z-10 h-full flex items-center">
                         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                            <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-6 text-white leading-tight animate-fade-in drop-shadow-lg">
-                                <span class="text-yellow-500">Preserving</span> Knowledge
+                            <img src="{{ asset('images/logo-uspf.png') }}" alt="USPF Logo" class="h-24 mx-auto mb-8 drop-shadow-md">
+                            <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 text-white leading-tight animate-fade-in drop-shadow-lg">
+                                <span class="text-yellow-400">Preserving</span> Knowledge
                                 <br>
                                 Empowering
                                 <br>
-                                <span class="text-blue-500">Research</span>
+                                <span class="text-blue-400">Research</span>
                             </h1>
                             <p class="text-base sm:text-lg md:text-xl text-gray-100 mb-8 max-w-3xl mx-auto px-4 leading-relaxed animate-fade-in-delayed drop-shadow-lg">
-                                Discover, Access, and Contribute to the University of Southern Philippines Foundation's digital
-                                archive of research papers.
+                                The University of Southern Philippines Foundation's digital archive of academic research papers, theses, and dissertations.
                             </p>
                             <div class="flex flex-col sm:flex-row justify-center gap-4 mt-8">
-                                @auth
-                                    <a href="{{ url('/dashboard') }}" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors">
-                                        Go to Dashboard
-                                        <svg class="ml-2 -mr-1 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                                        </svg>
-                                    </a>
-                                @else
-                                    <a href="{{ route('login') }}" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors">
-                                        Login to Access Research Papers
-                                        <svg class="ml-2 -mr-1 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
-                                        </svg>
-                                    </a>
-                                    @if (Route::has('register'))
-                                        <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-5 py-3 border border-white text-base font-medium rounded-md text-white hover:bg-white hover:text-blue-600 transition-colors">
-                                            Register Now
-                                        </a>
-                                    @endif
-                                @endauth
+                                <a href="#featured" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors">
+                                    Explore Collection
+                                    <svg class="ml-2 -mr-1 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                    </svg>
+                                </a>
+                                <a href="#about-uspf" class="inline-flex items-center justify-center px-5 py-3 border border-white text-base font-medium rounded-md text-white hover:bg-white hover:text-blue-600 transition-colors">
+                                    About USPF
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -456,7 +454,7 @@
                 </div>
 
                 <!-- Research Papers by Department Section -->
-                <div class="py-12 bg-gray-50">
+                <div id="departments" class="py-12 bg-gray-50">
                     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div class="text-center mb-12" data-aos="fade-up">
                             <h2 class="text-3xl font-bold text-gray-900">Research Papers by Department</h2>
@@ -647,7 +645,7 @@
                 </div>
 
                 <!-- Academic Works (Dissertations & Theses) -->
-                <div class="py-16 bg-gray-50 border-t border-gray-200">
+                <div id="academic" class="py-16 bg-gray-50 border-t border-gray-200">
                     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div class="text-center mb-12" data-aos="fade-up">
                             <h2 class="text-3xl font-bold text-gray-900">Academic Works</h2>
@@ -831,24 +829,43 @@
                 </div>
 
                 <div class="py-12 bg-white">
-                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                        <h2 class="text-3xl font-bold text-gray-900 mb-4">Join the USPF Research Repository</h2>
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center" id="about-uspf">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-4">About the University of Southern Philippines Foundation</h2>
                         <p class="text-lg text-gray-600 mb-8 max-w-3xl mx-auto">
-                            Access thousands of research papers, dissertations, and academic works from USPF students and faculty members.
+                            Founded in 1927, USPF has established itself as a leading institution for higher education in Cebu City. 
+                            Our research repository showcases the academic excellence and innovative spirit of our students and faculty.
                         </p>
-                        
-                        @guest
-                            <div class="flex flex-col sm:flex-row justify-center gap-4">
-                                <a href="{{ route('login') }}" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors">
-                                    Log In to Access
-                                </a>
-                                @if (Route::has('register'))
-                                    <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-5 py-3 border border-blue-600 text-base font-medium rounded-md text-blue-600 bg-white hover:bg-blue-600 hover:text-white transition-colors">
-                                        Create an Account
-                                    </a>
-                                @endif
+                        <div class="mt-8 flex justify-center">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left max-w-4xl">
+                                <div class="bg-gray-50 p-6 rounded-lg">
+                                    <div class="text-blue-600 mb-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-lg font-semibold mb-2">Research Excellence</h3>
+                                    <p class="text-gray-600">Our repository features over 1,000 research papers across various disciplines.</p>
+                                </div>
+                                <div class="bg-gray-50 p-6 rounded-lg">
+                                    <div class="text-blue-600 mb-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-lg font-semibold mb-2">Academic Heritage</h3>
+                                    <p class="text-gray-600">Celebrating over 95 years of academic excellence and innovation.</p>
+                                </div>
+                                <div class="bg-gray-50 p-6 rounded-lg">
+                                    <div class="text-blue-600 mb-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-lg font-semibold mb-2">Global Impact</h3>
+                                    <p class="text-gray-600">Our research contributes to knowledge and solutions on a global scale.</p>
+                                </div>
                             </div>
-                        @endguest
+                        </div>
                     </div>
                 </div>
                 

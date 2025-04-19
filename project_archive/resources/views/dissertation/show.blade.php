@@ -481,21 +481,62 @@
                                 @php $relatedCount = 0; @endphp
                                 @foreach($relatedDissertations ?? [] as $related)
                                     @php
-                                        // Calculate meaningful relationships using multiple criteria
+                                        // Skip if it's the same dissertation
+                                        if($related->id === $dissertation->id) continue;
+                                        
+                                        // Calculate title similarity
+                                        $mainWords = preg_split('/\s+/', strtolower($dissertation->title));
+                                        $relatedWords = preg_split('/\s+/', strtolower($related->title));
+                                        
+                                        // Filter out very common words
+                                        $stopWords = ['the', 'a', 'an', 'of', 'and', 'in', 'on', 'at', 'for', 'to', 'with', 'by'];
+                                        $mainWords = array_diff($mainWords, $stopWords);
+                                        $relatedWords = array_diff($relatedWords, $stopWords);
+                                        
+                                        $commonWords = array_intersect($mainWords, $relatedWords);
+                                        
+                                        // Calculate other relationship factors
                                         $departmentMatch = $dissertation->department === $related->department;
                                         $typeMatch = $dissertation->type === $related->type;
+                                        $yearMatch = abs(intval($dissertation->year) - intval($related->year)) <= 3;
                                         
                                         // Extract keywords
                                         $dissertationKeywords = array_map('trim', explode(',', $dissertation->keywords ?? ''));
                                         $relatedKeywords = array_map('trim', explode(',', $related->keywords ?? ''));
                                         $commonKeywords = array_intersect($dissertationKeywords, $relatedKeywords);
                                         
-                                        // Determine if truly related
-                                        $isRelated = (
-                                            ($departmentMatch && !empty($commonKeywords)) || // Same department and shared keywords
-                                            ($typeMatch && !empty($commonKeywords)) || // Same type and shared keywords
-                                            (!empty($commonKeywords) && count($commonKeywords) >= 2) // Multiple shared keywords
-                                        );
+                                        // Calculate title similarity score (prioritize multi-word matches)
+                                        $titleSimilarityScore = 0;
+                                        if (count($commonWords) >= 3) {
+                                            $titleSimilarityScore = 10; // High match - multiple significant words
+                                        } elseif (count($commonWords) == 2) {
+                                            $titleSimilarityScore = 7;  // Medium match - couple words in common
+                                        } elseif (count($commonWords) == 1 && strlen(reset($commonWords)) > 4) {
+                                            $titleSimilarityScore = 3;  // Low match - one significant word
+                                        }
+                                        
+                                        // Calculate total relevance score
+                                        $relevanceScore = 0;
+                                        $relevanceScore += $titleSimilarityScore;            // Title is most important
+                                        $relevanceScore += $departmentMatch ? 3 : 0;         // Same department
+                                        $relevanceScore += $typeMatch ? 2 : 0;               // Same type
+                                        $relevanceScore += count($commonKeywords) * 2;       // Each matching keyword
+                                        $relevanceScore += $yearMatch ? 1 : 0;               // Recent timeframe
+                                        
+                                        // Determine relationship type
+                                        $relationType = "";
+                                        if ($titleSimilarityScore >= 7) {
+                                            $relationType = "Similar title";
+                                        } elseif (!empty($commonKeywords) && count($commonKeywords) >= 2) {
+                                            $relationType = "Related topics";
+                                        } elseif ($titleSimilarityScore >= 3) {
+                                            $relationType = "Related title";
+                                        } elseif ($departmentMatch && $typeMatch) {
+                                            $relationType = "Same department & type";
+                                        }
+                                        
+                                        // Only show if there's a meaningful relationship (title match prioritized)
+                                        $isRelated = $relevanceScore >= 3;
                                     @endphp
 
                                     @if($isRelated)
@@ -515,24 +556,33 @@
                                                 <p class="text-sm">
                                                     <span class="font-medium">Year:</span> {{ $related->year }}
                                                 </p>
+                                                <p class="text-sm line-clamp-2 mt-2 text-gray-600">
+                                                    {{ Str::limit(strip_tags($related->abstract), 120) }}
+                                                </p>
                                                 
                                                 <!-- Show relationship indicators -->
                                                 <div class="flex flex-wrap gap-2 mt-2">
-                                                    @if(!empty($commonKeywords))
-                                                        <span class="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">
-                                                            Related Topics: {{ implode(', ', array_slice($commonKeywords, 0, 2)) }}{{ count($commonKeywords) > 2 ? '...' : '' }}
+                                                    @if(!empty($relationType))
+                                                        <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                                                            {{ $relationType }}
                                                         </span>
                                                     @endif
                                                     
-                                                    @if($departmentMatch)
-                                                        <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
-                                                            Same Department
+                                                    @if($titleSimilarityScore >= 7)
+                                                        <span class="bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded-full">
+                                                            Title match
                                                         </span>
                                                     @endif
-
-                                                    @if($typeMatch)
+                                                    
+                                                    @if(!empty($commonKeywords))
+                                                        <span class="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">
+                                                            Common keywords: {{ implode(', ', array_slice($commonKeywords, 0, 2)) }}{{ count($commonKeywords) > 2 ? '...' : '' }}
+                                                        </span>
+                                                    @endif
+                                                    
+                                                    @if($yearMatch && abs(intval($dissertation->year) - intval($related->year)) <= 1)
                                                         <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
-                                                            Same Type
+                                                            Same timeframe
                                                         </span>
                                                     @endif
                                                 </div>
@@ -540,7 +590,7 @@
 
                                             <div class="flex justify-end">
                                                 <a href="{{ route('dissertation.show', $related->id) }}"
-                                                class="inline-flex items-center text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                                   class="inline-flex items-center text-blue-600 hover:text-blue-800 text-sm font-medium">
                                                     View Dissertation
                                                     <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -556,7 +606,7 @@
                                         <svg class="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                         </svg>
-                                        <p class="text-gray-500">No related dissertations found based on keywords, department, or content.</p>
+                                        <p class="text-gray-500">No related dissertations found based on title, keywords, or content.</p>
                                     </div>
                                 @endif
                             </div>

@@ -523,26 +523,58 @@
                                     @php $relatedCount = 0; @endphp
                                     @foreach($relatedStudies ?? [] as $study)
                                         @php
+                                            // Skip if it's the same study
+                                            if($study->id === $project->id) continue;
+                                            
+                                            // Calculate title similarity
+                                            $projectWords = preg_split('/\s+/', strtolower($project->project_name));
+                                            $studyWords = preg_split('/\s+/', strtolower($study->project_name));
+                                            $commonWords = array_intersect($projectWords, $studyWords);
+                                            
                                             // Calculate meaningful relationships using multiple criteria
                                             $departmentMatch = $project->department === $study->department;
                                             $curriculumMatch = $project->curriculum === $study->curriculum;
                                             
-                                            // Extract keywords
-                                            $projectKeywords = array_map('trim', explode(',', $project->keywords ?? ''));
-                                            $studyKeywords = array_map('trim', explode(',', $study->keywords ?? ''));
-                                            $commonKeywords = array_intersect($projectKeywords, $studyKeywords);
+                                            // Extract keywords if they exist
+                                            $projectKeywords = !empty($project->keywords) ? 
+                                                array_map('trim', explode(',', $project->keywords)) : [];
+                                            $studyKeywords = !empty($study->keywords) ? 
+                                                array_map('trim', explode(',', $study->keywords)) : [];
+                                            $commonKeywords = !empty($projectKeywords) && !empty($studyKeywords) ? 
+                                                array_intersect($projectKeywords, $studyKeywords) : [];
                                             
-                                            // Calculate title similarity
-                                            $projectWords = array_map('strtolower', explode(' ', $project->project_name));
-                                            $studyWords = array_map('strtolower', explode(' ', $study->project_name));
-                                            $commonWords = array_intersect($projectWords, $studyWords);
+                                            // Calculate title similarity score (prioritize multi-word matches)
+                                            $titleSimilarityScore = 0;
+                                            if (count($commonWords) >= 2) {
+                                                $titleSimilarityScore = count($commonWords) * 2;
+                                            } elseif (count($commonWords) == 1 && strlen(reset($commonWords)) > 4) {
+                                                // Give some weight to single significant word matches
+                                                $titleSimilarityScore = 1;
+                                            }
                                             
-                                            // Determine if studies are truly related (must meet multiple criteria)
-                                            $isRelated = (
-                                                ($departmentMatch && !empty($commonKeywords)) || // Same department and shared keywords
-                                                ($departmentMatch && count($commonWords) >= 3) || // Same department and significant title overlap
-                                                (!empty($commonKeywords) && count($commonKeywords) >= 2) // Multiple shared keywords
-                                            );
+                                            // Calculate relevance score
+                                            $relevanceScore = 0;
+                                            $relevanceScore += $titleSimilarityScore * 2; // Title similarity is most important
+                                            $relevanceScore += $departmentMatch ? 3 : 0;  // Same department adds weight
+                                            $relevanceScore += $curriculumMatch ? 2 : 0;  // Same curriculum adds weight
+                                            $relevanceScore += count($commonKeywords) * 1.5; // Each common keyword adds weight
+                                            
+                                            // Determine if studies are related (must have some meaningful similarity)
+                                            $isRelated = $relevanceScore >= 2;
+                                            
+                                            // Get relationship type
+                                            $relationType = "";
+                                            if ($titleSimilarityScore >= 4) {
+                                                $relationType = "Highly similar title";
+                                            } elseif ($titleSimilarityScore >= 2) {
+                                                $relationType = "Similar title";
+                                            } elseif ($departmentMatch && !empty($commonKeywords)) {
+                                                $relationType = "Related topic in same department";
+                                            } elseif (!empty($commonKeywords)) {
+                                                $relationType = "Related topic";
+                                            } elseif ($departmentMatch && $curriculumMatch) {
+                                                $relationType = "Same program";
+                                            }
                                         @endphp
 
                                         @if($isRelated)
@@ -559,18 +591,27 @@
                                                     <p class="text-sm">
                                                         <span class="font-medium">Year:</span> {{ $study->created_at->format('Y') }}
                                                     </p>
+                                                    <p class="text-sm line-clamp-2 mt-2 text-gray-600">
+                                                        {{ Str::limit(strip_tags(html_entity_decode($study->abstract)), 100) }}
+                                                    </p>
                                                     
                                                     <!-- Show relationship indicators -->
                                                     <div class="flex flex-wrap gap-2 mt-2">
-                                                        @if(!empty($commonKeywords))
-                                                            <span class="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">
-                                                                Related Topics: {{ implode(', ', array_slice($commonKeywords, 0, 2)) }}{{ count($commonKeywords) > 2 ? '...' : '' }}
+                                                        @if(!empty($relationType))
+                                                            <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                                                                {{ $relationType }}
                                                             </span>
                                                         @endif
                                                         
-                                                        @if($departmentMatch)
-                                                            <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
-                                                                Same Department
+                                                        @if(!empty($commonKeywords))
+                                                            <span class="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">
+                                                                Common keywords: {{ implode(', ', array_slice($commonKeywords, 0, 2)) }}{{ count($commonKeywords) > 2 ? '...' : '' }}
+                                                            </span>
+                                                        @endif
+                                                        
+                                                        @if($curriculumMatch && !$departmentMatch)
+                                                            <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
+                                                                Same curriculum
                                                             </span>
                                                         @endif
                                                     </div>
@@ -578,7 +619,7 @@
 
                                                 <div class="flex justify-end">
                                                     <a href="{{ route('research.show', $study) }}"
-                                                    class="inline-flex items-center text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                                       class="inline-flex items-center text-blue-600 hover:text-blue-800 text-sm font-medium">
                                                         View Research
                                                         <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -594,7 +635,7 @@
                                             <svg class="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                             </svg>
-                                            <p class="text-gray-500">No related studies found based on keywords, department, or content.</p>
+                                            <p class="text-gray-500">No related studies found based on title, keywords, or content.</p>
                                         </div>
                                     @endif
                                 </div>

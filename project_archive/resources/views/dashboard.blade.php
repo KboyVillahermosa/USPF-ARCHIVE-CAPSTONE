@@ -294,6 +294,82 @@
         </div>
     </div>
 
+    <!-- Featured Research (STUDENT ONLY) -->
+    <div class="bg-white py-16 border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12" data-aos="fade-up">
+                <h2 class="text-3xl font-bold text-gray-900">Featured Student Research</h2>
+                <p class="mt-4 text-lg text-gray-600">Explore the most impactful student submissions in our archive</p>
+            </div>
+
+            <!-- Enhanced Feature Cards for Featured Research Section -->
+            <div class="mb-8 border-b border-gray-200" x-data="{ activeTab: 'recent' }">
+                <div class="flex flex-wrap -mb-px">
+                    <button @click="activeTab = 'recent'" :class="{'border-blue-500 text-blue-600': activeTab === 'recent'}" 
+                            class="mr-8 py-4 px-1 border-b-2 font-medium text-sm sm:text-base transition-colors duration-200 whitespace-nowrap">
+                        <i class="fas fa-clock mr-2"></i> Most Recent
+                    </button>
+                    <button @click="activeTab = 'viewed'" :class="{'border-blue-500 text-blue-600': activeTab === 'viewed'}" 
+                            class="mr-8 py-4 px-1 border-b-2 font-medium text-sm sm:text-base transition-colors duration-200 whitespace-nowrap">
+                        <i class="fas fa-eye mr-2"></i> Most Viewed
+                    </button>
+                    <button @click="activeTab = 'popular'" :class="{'border-blue-500 text-blue-600': activeTab === 'popular'}" 
+                            class="py-4 px-1 border-b-2 font-medium text-sm sm:text-base transition-colors duration-200 whitespace-nowrap">
+                        <i class="fas fa-star mr-2"></i> Most Popular
+                    </button>
+                </div>
+
+                <!-- Most Recent Tab -->
+                <div x-show="activeTab === 'recent'" class="mt-6">
+                    <div class="mb-4 flex justify-between items-center">
+                        <h3 class="text-lg font-medium text-gray-700">Showing top 10 most recent student research</h3>
+                        <a href="{{ route('research.index', ['sort' => 'recent', 'type' => 'student']) }}" class="text-blue-600 hover:text-blue-700 font-medium group flex items-center">
+                            View All <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
+                        </a>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        @foreach($recentSubmissions->where('faculty_research', false)->take(10) as $index => $project)
+                            <!-- Student research card content -->
+                        @endforeach
+                    </div>
+                </div>
+
+                <!-- Most Viewed Tab -->
+                <div x-show="activeTab === 'viewed'" class="mt-6">
+                    <div class="mb-4 flex justify-between items-center">
+                        <h3 class="text-lg font-medium text-gray-700">Showing top 10 most viewed student research</h3>
+                        <a href="{{ route('research.index', ['sort' => 'views', 'type' => 'student']) }}" class="text-blue-600 hover:text-blue-700 font-medium group flex items-center">
+                            View All <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
+                        </a>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        @foreach($mostViewedSubmissions->where('faculty_research', false)->take(10) as $index => $project)
+                            <!-- Student research card content -->
+                        @endforeach
+                    </div>
+                </div>
+
+                <!-- Most Popular Tab -->
+                <div x-show="activeTab === 'popular'" class="mt-6">
+                    <div class="mb-4 flex justify-between items-center">
+                        <h3 class="text-lg font-medium text-gray-700">Showing top 10 most popular student research</h3>
+                        <a href="{{ route('research.index', ['sort' => 'popular', 'type' => 'student']) }}" class="text-blue-600 hover:text-blue-700 font-medium group flex items-center">
+                            View All <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
+                        </a>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        @foreach($mostPopularSubmissions->where('faculty_research', false)->take(10) as $index => $project)
+                            <!-- Student research card content -->
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- How It Works Section -->
     <div class="bg-white py-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -721,26 +797,39 @@
         </div>
     </div>
 
-    <!-- Research Papers Grid -->
+    <!-- Student Research Papers Grid -->
     <div class="py-12 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            @foreach($departments as $department => $projects)
+            <div class="text-center mb-12" data-aos="fade-up">
+                <h2 class="text-3xl font-bold text-gray-900">Student Research by Department</h2>
+                <p class="mt-4 text-lg text-gray-600">Explore projects from our talented students across different departments</p>
+            </div>
+            
+            @php
+                // Get student research projects (excluding faculty research) grouped by department
+                $studentDepartments = App\Models\ResearchRepository::where('faculty_research', false)
+                    ->where('approved', 1)
+                    ->get()
+                    ->groupBy('department');
+            @endphp
+            
+            @foreach($studentDepartments as $department => $projects)
                 <div class="mb-12" data-aos="fade-up">
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="text-2xl font-bold text-gray-900">{{ $department }}</h3>
                         @if(!empty($department))
-                            <a href="{{ route('department.show', ['department' => $department]) }}" 
-                               class="text-blue-500 hover:text-blue-600 font-medium">
-                                View All <i class="fas fa-arrow-right ml-2"></i>
+                            <a href="{{ route('department.show', ['department' => $department, 'type' => 'student']) }}" 
+                               class="text-blue-500 hover:text-blue-600 font-medium group flex items-center">
+                                View All <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
                             </a>
                         @endif
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        @foreach($projects as $project)
+                        @foreach($projects->take(3) as $project)
                             <div class="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 group">
                                 <div class="relative">
                                     <img src="{{ asset('storage/' . $project->banner_image) }}" 
-                                         alt="Research Project"
+                                         alt="Student Research Project"
                                          class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500">
                                     <div class="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium shadow-sm">
                                         {{ $project->curriculum }}
@@ -792,7 +881,6 @@
                 </div>
             @endforeach
         </div>
-    
     </div>
 
     @include('layouts.footer')

@@ -14,11 +14,41 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+        <style>
+             body {
+                margin: 0;
+                padding: 0;
+            }
+            .main-navbar {
+                position: fixed;
+                top: 0;
+                width: 100%;
+                z-index: 50;
+                transition: all 0.3s ease;
+            }
+            .navbar-scrolled {
+                background-color: rgba(255, 255, 255, 0.95);
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            }
+            .navbar-transparent {
+                background-color: rgba(255, 255, 255, 0.9);
+            }
+            .content-wrapper {
+                padding-top: 4rem;
+            }
+            @media (min-width: 640px) {
+                .nav-link-active {
+                    border-bottom: 2px solid #2563eb;
+                    color: #2563eb;
+                }
+            }
+        </style>
     </head>
     <body class="font-sans antialiased bg-gray-50">
         <div class="min-h-screen">
             <!-- Navigation -->
-            <nav x-data="{ open: false }" class="bg-white border-b border-gray-100 fixed w-full z-50 shadow-sm">
+            <nav x-data="{ open: false }" class="bg-white border-b border-gray-100 fixed w-full z-50 shadow-sm top-0">
                 <!-- Primary Navigation Menu -->
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between h-16">

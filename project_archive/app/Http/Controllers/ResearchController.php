@@ -150,9 +150,12 @@ class ResearchController extends Controller
         return view('department.show', compact('projects', 'department'));
     }
 
-    public function download(Request $request, $id)
+    public function download(Request $request, ResearchRepository $project)
     {
-        $project = ResearchRepository::findOrFail($id);
+        // Check if user is authenticated
+        if (!auth()->check()) {
+            return redirect()->route('login')->with('error', 'You must be logged in to download research papers.');
+        }
         
         // Validate the download purpose
         $request->validate([

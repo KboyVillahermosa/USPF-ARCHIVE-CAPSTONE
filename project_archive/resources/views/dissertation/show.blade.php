@@ -30,16 +30,28 @@
                     
                     <div class="flex items-center space-x-3">
                         @if($dissertation->status === 'approved')
-                            <button data-download-trigger 
-                                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center text-sm font-medium transition-colors duration-200">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                                </svg>
-                                Download
-                            </button>
+                            @auth
+                                <!-- Show download button for authenticated users -->
+                                <button data-download-trigger 
+                                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center text-sm font-medium transition-colors duration-200">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                    </svg>
+                                    Download
+                                </button>
+                            @else
+                                <!-- Show login to download for guests -->
+                                <a href="{{ route('login') }}" 
+                                    class="bg-gray-100 hover:bg-gray-200 text-gray-800 border border-gray-300 px-4 py-2 rounded-lg flex items-center text-sm font-medium transition-colors duration-200">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                                    </svg>
+                                    Login to Download
+                                </a>
+                            @endauth
                         @endif
                         
-                        <a href="{{ route('history') }}" 
+                        <a href="{{ url()->previous() }}" 
                             class="text-gray-600 hover:text-gray-800 flex items-center text-sm font-medium">
                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
@@ -49,6 +61,29 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Add a notification for guests -->
+            @guest
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-yellow-800">
+                            Login required for downloads
+                        </h3>
+                        <div class="mt-2 text-sm text-yellow-700">
+                            <p>
+                                You're viewing this dissertation as a guest. <a href="{{ route('login') }}" class="font-medium underline">Log in</a> to download this document.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endguest
 
             <!-- Main Content with Sidebar Tabs -->
             <div class="bg-white overflow-hidden shadow-sm rounded-b-lg flex flex-col md:flex-row" x-data="{ activeTab: 'overview' }">
@@ -228,12 +263,21 @@
                                                 Get Citation
                                             </button>
                                             @if($dissertation->status === 'approved')
-                                                <button data-download-trigger class="flex items-center text-blue-600 hover:text-blue-800">
-                                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                                                    </svg>
-                                                    Download Dissertation
-                                                </button>
+                                                @auth
+                                                    <button data-download-trigger class="flex items-center text-blue-600 hover:text-blue-800">
+                                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                                        </svg>
+                                                        Download Dissertation
+                                                    </button>
+                                                @else
+                                                    <a href="{{ route('login') }}" class="flex items-center text-gray-500 hover:text-gray-700">
+                                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                                        </svg>
+                                                        Login to Download
+                                                    </a>
+                                                @endauth
                                             @endif
                                         </div>
                                     </div>

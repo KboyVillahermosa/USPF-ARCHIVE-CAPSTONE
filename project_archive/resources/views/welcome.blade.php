@@ -48,7 +48,7 @@
     <body class="font-sans antialiased bg-gray-50">
         <div class="min-h-screen">
             <!-- Navigation -->
-            <nav x-data="{ open: false }" class="bg-white border-b border-gray-100 fixed w-full z-50 shadow-sm top-0">
+            <nav x-data="{ open: false }" class="bg-white border-b border-gray-100 fixed w-full z-50 shadow-sm">
                 <!-- Primary Navigation Menu -->
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between h-16">
@@ -225,15 +225,9 @@
                             <div x-show="activeTab === 'recent'" class="mt-6">
                                 <div class="mb-4 flex justify-between items-center">
                                     <h3 class="text-lg font-medium text-gray-700">Showing top 10 most recent research</h3>
-                                    @auth
-                                        <a href="{{ route('research.index', ['sort' => 'recent']) }}" class="text-blue-600 hover:text-blue-700 font-medium group flex items-center">
-                                            View All <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
-                                        </a>
-                                    @else
-                                        <a href="{{ route('login') }}" class="text-blue-600 hover:text-blue-700 font-medium group flex items-center">
-                                            Login for Full Access <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
-                                        </a>
-                                    @endauth
+                                    <a href="{{ route('research.index', ['sort' => 'recent']) }}" class="text-blue-600 hover:text-blue-700 font-medium group flex items-center">
+                                        View All <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
+                                    </a>
                                 </div>
                                 
                                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -288,19 +282,11 @@
                                                     </div>
                                                 </div>
 
-                                                @auth
-                                                    <a href="{{ route('research.show', $project->id) }}"
-                                                       class="group inline-flex items-center justify-center w-full bg-white border border-blue-500 text-blue-600 px-4 py-2.5 rounded-lg hover:bg-blue-600 hover:text-white transition-all duration-300 font-medium shadow-sm">
-                                                        <span>Access Research</span>
-                                                        <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
-                                                    </a>
-                                                @else
-                                                    <a href="{{ route('login') }}"
-                                                       class="group inline-flex items-center justify-center w-full bg-white border border-blue-500 text-blue-600 px-4 py-2.5 rounded-lg hover:bg-blue-600 hover:text-white transition-all duration-300 font-medium shadow-sm">
-                                                        <span>Login to Access</span>
-                                                        <i class="fas fa-lock ml-2"></i>
-                                                    </a>
-                                                @endauth
+                                                <a href="{{ route('research.show', $project->id) }}"
+                                                   class="group inline-flex items-center justify-center w-full bg-white border border-blue-500 text-blue-600 px-4 py-2.5 rounded-lg hover:bg-blue-600 hover:text-white transition-all duration-300 font-medium shadow-sm">
+                                                    <span>View Details</span>
+                                                    <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
+                                                </a>
                                             </div>
                                         </div>
                                     @endforeach
@@ -311,15 +297,9 @@
                             <div x-show="activeTab === 'viewed'" class="mt-6">
                                 <div class="mb-4 flex justify-between items-center">
                                     <h3 class="text-lg font-medium text-gray-700">Showing top 10 most viewed research</h3>
-                                    @auth
-                                        <a href="{{ route('research.index', ['sort' => 'views']) }}" class="text-blue-600 hover:text-blue-700 font-medium group flex items-center">
-                                            View All <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
-                                        </a>
-                                    @else
-                                        <a href="{{ route('login') }}" class="text-blue-600 hover:text-blue-700 font-medium group flex items-center">
-                                            Login for Full Access <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
-                                        </a>
-                                    @endauth
+                                    <a href="{{ route('research.index', ['sort' => 'views']) }}" class="text-blue-600 hover:text-blue-700 font-medium group flex items-center">
+                                        View All <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
+                                    </a>
                                 </div>
                                 
                                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -373,19 +353,11 @@
                                                     </div>
                                                 </div>
 
-                                                @auth
-                                                    <a href="{{ route('research.show', $project->id) }}"
-                                                       class="group inline-flex items-center justify-center w-full bg-white border border-blue-500 text-blue-600 px-4 py-2.5 rounded-lg hover:bg-blue-600 hover:text-white transition-all duration-300 font-medium shadow-sm">
-                                                        <span>Access Research</span>
-                                                        <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
-                                                    </a>
-                                                @else
-                                                    <a href="{{ route('login') }}"
-                                                       class="group inline-flex items-center justify-center w-full bg-white border border-blue-500 text-blue-600 px-4 py-2.5 rounded-lg hover:bg-blue-600 hover:text-white transition-all duration-300 font-medium shadow-sm">
-                                                        <span>Login to Access</span>
-                                                        <i class="fas fa-lock ml-2"></i>
-                                                    </a>
-                                                @endauth
+                                                <a href="{{ route('research.show', $project->id) }}"
+                                                   class="group inline-flex items-center justify-center w-full bg-white border border-blue-500 text-blue-600 px-4 py-2.5 rounded-lg hover:bg-blue-600 hover:text-white transition-all duration-300 font-medium shadow-sm">
+                                                    <span>View Details</span>
+                                                    <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
+                                                </a>
                                             </div>
                                         </div>
                                     @endforeach
@@ -396,15 +368,9 @@
                             <div x-show="activeTab === 'popular'" class="mt-6">
                                 <div class="mb-4 flex justify-between items-center">
                                     <h3 class="text-lg font-medium text-gray-700">Showing top 10 most popular research</h3>
-                                    @auth
-                                        <a href="{{ route('research.index', ['sort' => 'popular']) }}" class="text-blue-600 hover:text-blue-700 font-medium group flex items-center">
-                                            View All <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
-                                        </a>
-                                    @else
-                                        <a href="{{ route('login') }}" class="text-blue-600 hover:text-blue-700 font-medium group flex items-center">
-                                            Login for Full Access <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
-                                        </a>
-                                    @endauth
+                                    <a href="{{ route('research.index', ['sort' => 'popular']) }}" class="text-blue-600 hover:text-blue-700 font-medium group flex items-center">
+                                        View All <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
+                                    </a>
                                 </div>
                                 
                                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -461,19 +427,11 @@
                                                     </div>
                                                 </div>
 
-                                                @auth
-                                                    <a href="{{ route('research.show', $project->id) }}"
-                                                       class="group inline-flex items-center justify-center w-full bg-white border border-blue-500 text-blue-600 px-4 py-2.5 rounded-lg hover:bg-blue-600 hover:text-white transition-all duration-300 font-medium shadow-sm">
-                                                        <span>Access Research</span>
-                                                        <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
-                                                    </a>
-                                                @else
-                                                    <a href="{{ route('login') }}"
-                                                       class="group inline-flex items-center justify-center w-full bg-white border border-blue-500 text-blue-600 px-4 py-2.5 rounded-lg hover:bg-blue-600 hover:text-white transition-all duration-300 font-medium shadow-sm">
-                                                        <span>Login to Access</span>
-                                                        <i class="fas fa-lock ml-2"></i>
-                                                    </a>
-                                                @endauth
+                                                <a href="{{ route('research.show', $project->id) }}"
+                                                   class="group inline-flex items-center justify-center w-full bg-white border border-blue-500 text-blue-600 px-4 py-2.5 rounded-lg hover:bg-blue-600 hover:text-white transition-all duration-300 font-medium shadow-sm">
+                                                    <span>View Details</span>
+                                                    <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
+                                                </a>
                                             </div>
                                         </div>
                                     @endforeach
@@ -546,19 +504,11 @@
                                                         </div>
                                                     </div>
 
-                                                    @auth
-                                                        <a href="{{ route('research.show', $project->id) }}"
-                                                           class="group inline-flex items-center justify-center w-full bg-white border border-blue-500 text-blue-600 px-4 py-2.5 rounded-lg hover:bg-blue-600 hover:text-white transition-all duration-300 font-medium shadow-sm">
-                                                            <span>Access Research</span>
-                                                            <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
-                                                        </a>
-                                                    @else
-                                                        <a href="{{ route('login') }}"
-                                                           class="group inline-flex items-center justify-center w-full bg-white border border-blue-500 text-blue-600 px-4 py-2.5 rounded-lg hover:bg-blue-600 hover:text-white transition-all duration-300 font-medium shadow-sm">
-                                                            <span>Login to Access</span>
-                                                            <i class="fas fa-lock ml-2"></i>
-                                                        </a>
-                                                    @endauth
+                                                    <a href="{{ route('research.show', $project->id) }}"
+                                                       class="group inline-flex items-center justify-center w-full bg-white border border-blue-500 text-blue-600 px-4 py-2.5 rounded-lg hover:bg-blue-600 hover:text-white transition-all duration-300 font-medium shadow-sm">
+                                                        <span>View Details</span>
+                                                        <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
+                                                    </a>
                                                 </div>
                                             </div>
                                         @endforeach
@@ -646,19 +596,11 @@
                                                         </div>
                                                     </div>
 
-                                                    @auth
-                                                        <a href="{{ route('research.show', $project->id) }}"
-                                                           class="group inline-flex items-center justify-center w-full bg-white border border-purple-500 text-purple-600 px-4 py-2.5 rounded-lg hover:bg-purple-600 hover:text-white transition-all duration-300 font-medium shadow-sm">
-                                                            <span>Access Faculty Research</span>
-                                                            <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
-                                                        </a>
-                                                    @else
-                                                        <a href="{{ route('login') }}"
-                                                           class="group inline-flex items-center justify-center w-full bg-white border border-purple-500 text-purple-600 px-4 py-2.5 rounded-lg hover:bg-purple-600 hover:text-white transition-all duration-300 font-medium shadow-sm">
-                                                            <span>Login to Access</span>
-                                                            <i class="fas fa-lock ml-2"></i>
-                                                        </a>
-                                                    @endauth
+                                                    <a href="{{ route('research.show', $project->id) }}"
+                                                       class="group inline-flex items-center justify-center w-full bg-white border border-purple-500 text-purple-600 px-4 py-2.5 rounded-lg hover:bg-purple-600 hover:text-white transition-all duration-300 font-medium shadow-sm">
+                                                        <span>View Details</span>
+                                                        <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
+                                                    </a>
                                                 </div>
                                             </div>
                                         @endforeach
@@ -745,19 +687,11 @@
                                                     </div>
                                                 </div>
 
-                                                @auth
-                                                    <a href="{{ route('dissertation.show', $dissertation->id) }}"
-                                                       class="group inline-flex items-center justify-center w-full bg-white border border-blue-500 text-blue-600 px-4 py-2.5 rounded-lg hover:bg-blue-600 hover:text-white transition-all duration-300 font-medium shadow-sm">
-                                                        <span>Access Dissertation</span>
-                                                        <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
-                                                    </a>
-                                                @else
-                                                    <a href="{{ route('login') }}"
-                                                       class="group inline-flex items-center justify-center w-full bg-white border border-blue-500 text-blue-600 px-4 py-2.5 rounded-lg hover:bg-blue-600 hover:text-white transition-all duration-300 font-medium shadow-sm">
-                                                        <span>Login to Access</span>
-                                                        <i class="fas fa-lock ml-2"></i>
-                                                    </a>
-                                                @endauth
+                                                <a href="{{ route('dissertation.show', $dissertation->id) }}"
+                                                   class="group inline-flex items-center justify-center w-full bg-white border border-blue-500 text-blue-600 px-4 py-2.5 rounded-lg hover:bg-blue-600 hover:text-white transition-all duration-300 font-medium shadow-sm">
+                                                    <span>View Details</span>
+                                                    <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
+                                                </a>
                                             </div>
                                         </div>
                                     @endforeach
@@ -832,19 +766,11 @@
                                                     </div>
                                                 </div>
 
-                                                @auth
-                                                    <a href="{{ route('dissertation.show', $thesis->id) }}"
-                                                       class="group inline-flex items-center justify-center w-full bg-white border border-green-500 text-green-600 px-4 py-2.5 rounded-lg hover:bg-green-600 hover:text-white transition-all duration-300 font-medium shadow-sm">
-                                                        <span>Access Thesis</span>
-                                                        <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
-                                                    </a>
-                                                @else
-                                                    <a href="{{ route('login') }}"
-                                                       class="group inline-flex items-center justify-center w-full bg-white border border-green-500 text-green-600 px-4 py-2.5 rounded-lg hover:bg-green-600 hover:text-white transition-all duration-300 font-medium shadow-sm">
-                                                        <span>Login to Access</span>
-                                                        <i class="fas fa-lock ml-2"></i>
-                                                    </a>
-                                                @endauth
+                                                <a href="{{ route('dissertation.show', $thesis->id) }}"
+                                                   class="group inline-flex items-center justify-center w-full bg-white border border-green-500 text-green-600 px-4 py-2.5 rounded-lg hover:bg-green-600 hover:text-white transition-all duration-300 font-medium shadow-sm">
+                                                    <span>View Details</span>
+                                                    <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
+                                                </a>
                                             </div>
                                         </div>
                                     @endforeach
@@ -1000,3 +926,14 @@
         </script>
     </body>
 </html>
+
+<?php
+// In routes/web.php
+Route::get('/dissertation/{id}', [App\Http\Controllers\DissertationController::class, 'show'])
+    ->name('dissertation.show');
+
+// Only protect the download route
+Route::post('/dissertation/{dissertation}/download', [App\Http\Controllers\DissertationController::class, 'download'])
+    ->name('dissertation.download')
+    ->middleware('auth');
+?>

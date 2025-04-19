@@ -171,6 +171,7 @@ Route::get('/departments/{department}', [DepartmentController::class, 'show'])->
 Route::get('/research/{id}', [ResearchController::class, 'show'])->name('research.show');
 Route::post('/research/{id}/download', [ResearchController::class, 'download'])->name('research.download');
 Route::post('/research/{project}/download', [ResearchController::class, 'download'])->name('research.download');
+Route::get('/research/{id}/download-presentation', [ResearchController::class, 'downloadPresentation'])->name('research.download.presentation');
 Route::get('/check-research/{name}', function($name) {
     return response()->json([
         'exists' => \App\Models\Research::where('project_name', $name)->exists()
@@ -194,5 +195,7 @@ Route::post('dissertation/{id}/download', [DissertationController::class, 'downl
 Route::get('/learning-materials', function () {
     return view('learning_materials');
 })->name('learning.materials');
+
+Route::get('/dissertation/{dissertation}', [DissertationController::class, 'show'])->name('dissertation.show');
 
 require __DIR__.'/auth.php';

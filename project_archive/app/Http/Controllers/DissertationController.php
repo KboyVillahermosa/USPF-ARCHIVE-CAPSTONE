@@ -56,24 +56,36 @@ class DissertationController extends Controller
     public function show($id)
     {
         $dissertation = Dissertation::findOrFail($id);
-        $user = auth()->user();
-
-        // Check if dissertation is approved or if user is admin or owner
-        if ($dissertation->status === 'approved' || 
-            $user->isAdmin() || 
-            $dissertation->user_id === $user->id) {
-            
-            // Increment view count only if the viewer is not the owner
-            if ($dissertation->user_id !== $user->id) {
-                $dissertation->increment('view_count');
-            }
-            
-            // Change this line from 'dissertations.show' to 'dissertation.show'
-            return view('dissertation.show', compact('dissertation'));
-        }
         
-        // If dissertation is not approved and user is not admin or owner
-        return abort(403, 'Unauthorized action.');
+        // Increment view count
+        $dissertation->increment('view_count');
+        
+        // Get related dissertations
+        $relatedDissertations = Dissertation::where('id', '!=', $id)
+            ->where(function($query) use ($dissertation) {
+                $query->where('department', $dissertation->department)
+                      ->orWhere('type', $dissertation->type)
+                      ->orWhere('keywords', 'like', '%' . $dissertation->keywords . '%');
+            })
+            ->where('status', 'approved')
+            ->take(10)
+            ->get();
+        
+        // Debug file path information
+        $filePath = $dissertation->file_path;
+        $fullPath = storage_path('app/public/' . $filePath);
+        $fileExists = file_exists($fullPath);
+        $storagePath = storage_path('app/public');
+        $publicUrl = asset('storage/' . $filePath);
+        
+        return view('dissertation.show', compact(
+            'dissertation', 
+            'relatedDissertations',
+            'fileExists',
+            'fullPath',
+            'storagePath',
+            'publicUrl'
+        ));
     }
 
     public function history()
@@ -187,36 +199,32 @@ class DissertationController extends Controller
         // Find the dissertation
         $dissertation = Dissertation::findOrFail($id);
         
-        // Check if status is approved
-        if ($dissertation->status !== 'approved') {
-            return back()->with('error', 'This dissertation is not available for download.');
-        }
-
-        // Check if file exists
-        if (!Storage::exists($dissertation->file_path)) {
-            return back()->with('error', 'The file could not be found.');
+        // Validate that file exists
+        $path = storage_path('app/public/' . $dissertation->file_path);
+        
+        if (!file_exists($path)) {
+            return back()->with('error', 'File not found on server. Please contact administrator.');
         }
         
-        // Increment download count
+        // Record download purpose
+        $purpose = $request->input('purpose', []);
+        $otherPurposeText = $request->input('other_purpose_text');
+        
+        // Log the download (optional but recommended)
+        \Log::info('Dissertation download', [
+            'dissertation_id' => $id,
+            'user_id' => auth()->id(),
+            'purpose' => $purpose,
+            'other_purpose' => $otherPurposeText
+        ]);
+        
+        // Increment download counter
         $dissertation->increment('download_count');
         
-        // Log the download purpose if submitted
-        if ($request->has('purpose')) {
-            // Log purposes
-            $purposes = $request->input('purpose');
-            
-            // Handle "other" purpose text if provided
-            if (in_array('other', $purposes) && $request->has('other_purpose_text')) {
-                $otherText = $request->input('other_purpose_text');
-                // You might want to log this or save it to a download_logs table
-                \Log::info("Dissertation {$id} downloaded for other purpose: {$otherText}");
-            }
-            
-            // Log all selected purposes
-            \Log::info("Dissertation {$id} downloaded for purposes: " . implode(", ", $purposes));
-        }
+        // Return the file as download
+        $filename = $dissertation->title . ' - ' . $dissertation->author . '.pdf';
+        $cleanFilename = preg_replace('/[^a-zA-Z0-9_\-\.]/', '_', $filename);
         
-        // Return the file download
-        return Storage::download($dissertation->file_path, $dissertation->title . '.pdf');
+        return response()->download($path, $cleanFilename);
     }
 }

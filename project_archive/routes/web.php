@@ -189,4 +189,10 @@ Route::get('/research', [ResearchRepositoryController::class, 'index'])
 
 Route::get('/faculty/research/create', [FacultyResearchController::class, 'create'])->name('faculty.research.create');
 
+Route::post('dissertation/{id}/download', [DissertationController::class, 'download'])->name('dissertation.download');
+
+Route::get('/learning-materials', function () {
+    return view('learning_materials');
+})->name('learning.materials');
+
 require __DIR__.'/auth.php';

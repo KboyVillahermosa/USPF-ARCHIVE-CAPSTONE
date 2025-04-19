@@ -703,7 +703,8 @@
 
         // Show modal when download button is clicked
         document.querySelectorAll('[data-download-trigger]').forEach(button => {
-            button.addEventListener('click', () => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault(); // Prevent any default link behavior
                 downloadModal.classList.remove('hidden');
                 downloadModal.classList.add('flex');
             });
@@ -716,6 +717,13 @@
         if (document.getElementById('cancelDownloadX')) {
             document.getElementById('cancelDownloadX').addEventListener('click', hideDownloadModal);
         }
+
+        // Close when clicking outside
+        downloadModal.addEventListener('click', (e) => {
+            if (e.target === downloadModal) {
+                hideDownloadModal();
+            }
+        });
 
         function hideDownloadModal() {
             downloadModal.classList.remove('flex');
@@ -743,189 +751,26 @@
         // Validate form before submission
         if (downloadForm) {
             downloadForm.addEventListener('submit', (e) => {
-                e.preventDefault();
+                // Don't prevent default submission at start
                 
                 const checkedBoxes = Array.from(checkboxes).filter(cb => cb.checked);
                 
                 if (checkedBoxes.length === 0) {
+                    e.preventDefault(); // Now prevent default
                     alert('Please select at least one purpose for downloading.');
-                    return;
+                    return false;
                 }
 
                 if (otherCheckbox && otherCheckbox.checked && downloadForm.other_purpose_text && !downloadForm.other_purpose_text.value.trim()) {
+                    e.preventDefault(); // Now prevent default
                     alert('Please specify your other purpose.');
-                    return;
+                    return false;
                 }
 
-                downloadForm.submit();
+                // If we got here, form is valid, let it submit
+                console.log('Form is valid, submitting...');
+                return true;
             });
-        }
-
-        // PDF Viewer Controls
-        let currentZoom = 100;
-        const pdfViewer = document.getElementById('pdfViewer');
-        const zoomLevelDisplay = document.getElementById('zoomLevel');
-        let tocVisible = false;
-
-        function zoomIn() {
-            if (currentZoom < 200) {
-                currentZoom += 25;
-                updateZoom();
-            }
-        }
-
-        function zoomOut() {
-            if (currentZoom > 50) {
-                currentZoom -= 25;
-                updateZoom();
-            }
-        }
-
-        function updateZoom() {
-            const viewer = document.getElementById('pdfViewer');
-            if (viewer) {
-                viewer.style.transform = `scale(${currentZoom/100})`;
-                viewer.style.transformOrigin = 'center top';
-                if (zoomLevelDisplay) {
-                    zoomLevelDisplay.textContent = `${currentZoom}%`;
-                }
-            }
-        }
-
-        function nextPage() {
-            showLoading();
-            if (pdfViewer && pdfViewer.contentWindow) {
-                pdfViewer.contentWindow.postMessage({ type: 'nextPage' }, '*');
-            }
-        }
-
-        function previousPage() {
-            showLoading();
-            if (pdfViewer && pdfViewer.contentWindow) {
-                pdfViewer.contentWindow.postMessage({ type: 'previousPage' }, '*');
-            }
-        }
-
-        // Toggle fullscreen mode
-        function toggleFullscreen() {
-            const container = document.getElementById('pdfContainer');
-            
-            if (container) {
-                if (!document.fullscreenElement) {
-                    container.requestFullscreen().catch(err => {
-                        alert(`Error attempting to enable fullscreen: ${err.message}`);
-                    });
-                } else {
-                    document.exitFullscreen();
-                }
-            }
-        }
-
-        // Toggle table of contents
-        function toggleToc() {
-            const tocSidebar = document.getElementById('tocSidebar');
-            if (tocSidebar) {
-                tocVisible = !tocVisible;
-                
-                if (tocVisible) {
-                    tocSidebar.classList.remove('hidden');
-                } else {
-                    tocSidebar.classList.add('hidden');
-                }
-            }
-        }
-
-        // Copy to clipboard functions
-        function copyToClipboard() {
-            const url = window.location.href;
-            navigator.clipboard.writeText(url).then(() => {
-                showToast('Link copied to clipboard!');
-            }, (err) => {
-                console.error('Could not copy text: ', err);
-            });
-        }
-
-        function copyCitation(elementId) {
-            const citation = document.getElementById(elementId);
-            if (citation) {
-                navigator.clipboard.writeText(citation.innerText).then(() => {
-                    showToast('Citation copied to clipboard!');
-                }, (err) => {
-                    console.error('Could not copy text: ', err);
-                });
-            }
-        }
-
-        // Show toast message
-        function showToast(message) {
-            // Create toast element if it doesn't exist
-            let toast = document.getElementById('toast-notification');
-            if (!toast) {
-                toast = document.createElement('div');
-                toast.id = 'toast-notification';
-                toast.className = 'fixed bottom-4 right-4 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg transform transition-all duration-300 translate-y-20 opacity-0';
-                document.body.appendChild(toast);
-            }
-
-            // Set message and show toast
-            toast.textContent = message;
-            setTimeout(() => {
-                toast.classList.remove('translate-y-20', 'opacity-0');
-            }, 10);
-
-            // Hide toast after a delay
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 3000);
-        }
-
-        // Enhanced PDF loading handler
-        window.addEventListener('load', () => {
-            const pdfViewer = document.getElementById('pdfViewer');
-            const loadingOverlay = document.getElementById('pdfLoadingOverlay');
-            
-            if (pdfViewer && loadingOverlay) {
-                // Hide loading overlay after a maximum time (in case onload doesn't fire)
-                setTimeout(() => {
-                    loadingOverlay.classList.add('hidden');
-                }, 3000);
-                
-                // Try to detect when the PDF is actually loaded
-                pdfViewer.addEventListener('load', function() {
-                    loadingOverlay.classList.add('hidden');
-                });
-            }
-            
-            // Alternative: check if PDF is loaded by creating a test load event
-            if (loadingOverlay) {
-                const checkPDFLoaded = setInterval(() => {
-                    const embedContent = document.querySelector('#pdfViewer');
-                    if (embedContent) {
-                        if (embedContent.contentDocument && embedContent.body && 
-                            embedContent.body.childElementCount > 0) {
-                            loadingOverlay.classList.add('hidden');
-                            clearInterval(checkPDFLoaded);
-                        }
-                    }
-                }, 500);
-                
-                // Clear the interval after 10 seconds (fallback)
-                setTimeout(() => {
-                    clearInterval(checkPDFLoaded);
-                    loadingOverlay.classList.add('hidden');
-                }, 10000);
-            }
-        });
-
-        // Show loading overlay when changing pages
-        function showLoading() {
-            const overlay = document.getElementById('pdfLoadingOverlay');
-            if (overlay) {
-                overlay.classList.remove('hidden');
-                setTimeout(() => {
-                    overlay.classList.add('hidden');
-                }, 800); // Hide after a short period even if load event doesn't fire
-            }
         }
     </script>
 

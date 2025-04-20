@@ -31,7 +31,7 @@
                         </div>
                     </div>
                     <div class="md:w-1/3 bg-blue-800 flex items-center justify-center p-6">
-                        <img src="{{ asset('images/research-illustration.svg') }}" alt="Research Illustration" class="h-48">
+                        <img src="{{ asset('images/image5.jpg') }}" alt="Research Illustration" class="h-48">
                     </div>
                 </div>
             </div>

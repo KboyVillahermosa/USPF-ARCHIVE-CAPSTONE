@@ -39,6 +39,8 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -197,5 +199,9 @@ Route::get('/learning-materials', function () {
 })->name('learning.materials');
 
 Route::get('/dissertation/{dissertation}', [DissertationController::class, 'show'])->name('dissertation.show');
+
+Route::get('/about', function () {
+    return view('about.about');
+})->name('about');
 
 require __DIR__.'/auth.php';

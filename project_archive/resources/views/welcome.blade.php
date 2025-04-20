@@ -98,9 +98,10 @@
                 <!-- Responsive Navigation Menu -->
                 <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
                     <div class="pt-2 pb-3 space-y-1">
-                        <x-responsive-nav-link href="#about" class="block px-4 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
-                            {{ __('About') }}
-                        </x-responsive-nav-link>
+                    <x-responsive-nav-link href="{{ route('about') }}" class="block px-4 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
+    {{ __('About') }}
+</x-responsive-nav-link>
+
                         <x-responsive-nav-link href="#featured" class="block px-4 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
                             {{ __('Featured Research') }}
                         </x-responsive-nav-link>
@@ -783,7 +784,7 @@
                         </div>
                     </div>
                 </div>
-
+                <section id="about">
                 <div class="py-12 bg-white">
                     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center" id="about-uspf">
                         <h2 class="text-3xl font-bold text-gray-900 mb-4">About the University of Southern Philippines Foundation</h2>
@@ -791,6 +792,14 @@
                             Founded in 1927, USPF has established itself as a leading institution for higher education in Cebu City. 
                             Our research repository showcases the academic excellence and innovative spirit of our students and faculty.
                         </p>
+                        <div class="flex justify-center mb-8">
+                            <a href="{{ route('about') }}" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors">
+                                Learn More About USPF
+                                <svg class="ml-2 -mr-1 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                                </svg>
+                            </a>
+                        </div>
                         <div class="mt-8 flex justify-center">
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left max-w-4xl">
                                 <div class="bg-gray-50 p-6 rounded-lg">
@@ -824,7 +833,7 @@
                         </div>
                     </div>
                 </div>
-                
+                </section>
                 <!-- Footer -->
                 <footer class="bg-gray-900 text-white py-12">
                     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

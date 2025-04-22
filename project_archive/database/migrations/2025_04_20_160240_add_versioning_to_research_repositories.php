@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('research_repositories', function (Blueprint $table) {
-            $table->string('version')->default('1.0')->after('curriculum');
+            $table->unsignedBigInteger('parent_id')->nullable()->after('id'); // Links to the original research
+            $table->integer('version')->default(1)->after('parent_id'); // Tracks the version number
         });
     }
 
@@ -22,7 +23,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('research_repositories', function (Blueprint $table) {
-            $table->dropColumn('version');
+            $table->dropColumn(['parent_id', 'version']);
         });
     }
 };

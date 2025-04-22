@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-
+        <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
         <title>{{ config('app.name', 'USPF Research Repository') }}</title>
 
         <!-- Fonts -->
@@ -793,7 +793,7 @@
                             Our research repository showcases the academic excellence and innovative spirit of our students and faculty.
                         </p>
                         <div class="flex justify-center mb-8">
-                            <a href="{{ route('about') }}" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors">
+                            <a href="https://uspf.edu.ph/index.html" target="_blank" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors">
                                 Learn More About USPF
                                 <svg class="ml-2 -mr-1 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>

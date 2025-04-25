@@ -1,4 +1,12 @@
 <x-app-layout>
+    <style>
+        body {
+            -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+          }
+    </style>
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Top Stats Bar - Fixed position for easy access -->

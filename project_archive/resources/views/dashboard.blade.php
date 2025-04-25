@@ -1,4 +1,12 @@
 <x-app-layout>
+<style>
+     body {
+            -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+          }
+</style>
     <!-- Hero Section with Parallax Effect -->
     <div class="relative h-[100vh] bg-gradient-to-r from-blue-900/95 to-blue-800/90 pt-16 overflow-hidden">
         <div class="absolute inset-0 z-0">

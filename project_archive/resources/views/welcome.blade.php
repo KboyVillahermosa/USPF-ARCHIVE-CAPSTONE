@@ -19,6 +19,11 @@
              body {
                 margin: 0;
                 padding: 0;
+                /* Prevent text selection */
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
             }
             .main-navbar {
                 position: fixed;
@@ -43,10 +48,103 @@
                     color: #2563eb;
                 }
             }
+
+            /* Anti-selection and screenshot protection */
+            body {
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }
+            
+            /* Anti-screenshot protection styles */
+            img, .w-full.h-48.object-cover, .h-24.mx-auto, .h-10.mr-3 {
+                pointer-events: none;
+                position: relative;
+            }
+            
+            img::after, .w-full.h-48.object-cover::after, .h-24.mx-auto::after, .h-10.mr-3::after {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.0001);
+                pointer-events: none;
+            }
+            
+            /* Anti-screenshot watermark (appears on screenshots) */
+            body::before {
+                content: "";
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 2147483647;
+                pointer-events: none;
+                background-image: repeating-linear-gradient(
+                    45deg,
+                    rgba(0,0,0,0.002) 0px,
+                    rgba(0,0,0,0.002) 10px,
+                    rgba(0,0,0,0) 10px,
+                    rgba(0,0,0,0) 20px
+                );
+            }
+            
+            /* Image protection with watermark */
+            .protected-image-container {
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .protected-image-container::before {
+                content: "© USPF";
+                position: absolute;
+                bottom: 10px;
+                right: 10px;
+                background-color: rgba(255, 255, 255, 0.7);
+                color: #333;
+                font-size: 10px;
+                padding: 2px 6px;
+                border-radius: 3px;
+                z-index: 5;
+                pointer-events: none;
+            }
+            
+            /* Hidden watermark that appears in screenshots */
+            .hidden-watermark {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background: rgba(255,255,255,0.01);
+                z-index: 9999;
+                pointer-events: none;
+                opacity: 0;
+                background-image: url("data:image/svg+xml,%3Csvg width='500' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='50%25' y='50%25' font-family='Arial' font-size='20' fill='rgba(0,0,0,0.05)' text-anchor='middle'%3EUSPF PROTECTED CONTENT%3C/text%3E%3C/svg%3E");
+                transform: rotate(-45deg);
+                background-repeat: repeat;
+                background-size: 300px;
+            }
         </style>
     </head>
     <body class="font-sans antialiased bg-gray-50">
         <div class="min-h-screen">
+            <!-- Copy Protection Banner -->
+            <div class="bg-yellow-50 border-b border-yellow-100 py-2">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <p class="text-yellow-700 text-sm text-center flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                        <span>Content on this site is protected. Copying, screenshots, and unauthorized reproduction are prohibited.</span>
+                    </p>
+                </div>
+            </div>
+
             <!-- Navigation -->
             <nav x-data="{ open: false }" class="bg-white border-b border-gray-100 fixed w-full z-50 shadow-sm">
                 <!-- Primary Navigation Menu -->
@@ -144,8 +242,11 @@
                                      class="absolute inset-0">
                                     <div class="absolute inset-0 bg-black/70"></div>
                                     <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-blue-900/40 to-black/70"></div>
-                                    <img :src="slide.image" :alt="slide.alt" 
-                                         class="w-full h-full object-cover transform scale-105 opacity-80">
+                                    <div class="protected-image-container w-full h-full">
+                                        <img :src="slide.image" :alt="slide.alt" 
+                                             class="w-full h-full object-cover transform scale-105 opacity-80"
+                                             oncontextmenu="return false;" draggable="false">
+                                    </div>
                                 </div>
                             </template>
 
@@ -932,6 +1033,140 @@
                     }
                 }));
             });
+
+            // Create hidden watermark element
+            const watermark = document.createElement('div');
+            watermark.classList.add('hidden-watermark');
+            document.body.appendChild(watermark);
+            
+            // Prevent context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+C, Ctrl+S, Ctrl+U, Ctrl+P, PrintScreen, etc.
+                if (
+                    (e.ctrlKey && (e.keyCode === 67 || e.keyCode === 83 || e.keyCode === 85 || e.keyCode === 80)) ||
+                    (e.ctrlKey && e.shiftKey && e.keyCode === 73) ||
+                    e.keyCode === 123 || // F12
+                    e.keyCode === 44 // PrintScreen
+                ) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Prevent dragging images
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Prevent copying text
+            document.addEventListener('copy', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable saving images
+            document.addEventListener('DOMContentLoaded', function() {
+                // Find all images
+                const images = document.querySelectorAll('img');
+                
+                // Apply protection to all images
+                images.forEach(img => {
+                    // Prevent image saving and right-click
+                    img.setAttribute('draggable', 'false');
+                    img.style.pointerEvents = 'none';
+                    
+                    // Wrap image with protected container if it's not already wrapped
+                    if (!img.parentElement.classList.contains('protected-image-container')) {
+                        const wrapper = document.createElement('div');
+                        wrapper.classList.add('protected-image-container');
+                        
+                        // Get the computed style of the image
+                        const style = window.getComputedStyle(img);
+                        
+                        // Clone the image's dimensions and position styles to the wrapper
+                        wrapper.style.width = style.width;
+                        wrapper.style.height = style.height;
+                        wrapper.style.position = style.position !== 'static' ? style.position : 'relative';
+                        
+                        // Replace image with wrapper + image
+                        img.parentNode.insertBefore(wrapper, img);
+                        wrapper.appendChild(img);
+                    }
+                });
+                
+                // Apply protection to SVG images as well
+                const svgs = document.querySelectorAll('svg');
+                svgs.forEach(svg => {
+                    svg.setAttribute('draggable', 'false');
+                    svg.style.pointerEvents = 'none';
+                });
+            });
+            
+            // Anti-screenshot protection
+            // This creates an effect on the screen that appears in screenshots but not when viewing normally
+            function applyAntiScreenshotProtection() {
+                // Create SVG filter
+                const svgFilter = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                svgFilter.setAttribute('width', '0');
+                svgFilter.setAttribute('height', '0');
+                svgFilter.style.position = 'absolute';
+                svgFilter.style.overflow = 'hidden';
+                svgFilter.innerHTML = `
+                    <defs>
+                        <filter id="anti-screenshot-filter">
+                            <feTurbulence type="fractalNoise" baseFrequency="0.1" numOctaves="1"/>
+                            <feColorMatrix type="matrix" values="0 0 0 0 0, 0 0 0 0 0, 0 0 0 0 0, 0 0 0 0.03 0"/>
+                            <feComposite operator="in" in2="SourceGraphic"/>
+                            <feComposite operator="over" in2="SourceGraphic"/>
+                        </filter>
+                    </defs>
+                `;
+                document.body.appendChild(svgFilter);
+                
+                // Create a full-screen overlay that will be invisible when viewing
+                // but visible when taking a screenshot
+                const overlay = document.createElement('div');
+                overlay.style.position = 'fixed';
+                overlay.style.top = '0';
+                overlay.style.left = '0';
+                overlay.style.width = '100vw';
+                overlay.style.height = '100vh';
+                overlay.style.zIndex = '999999';
+                overlay.style.pointerEvents = 'none';
+                overlay.style.filter = 'url(#anti-screenshot-filter)';
+                overlay.style.background = 'transparent';
+                overlay.style.opacity = '0.01'; // Almost invisible to humans, but affects screenshots
+                document.body.appendChild(overlay);
+                
+                // Apply repeating pattern of watermarks that are almost invisible
+                // but show up in screenshots
+                for (let i = 0; i < 10; i++) {
+                    for (let j = 0; j < 10; j++) {
+                        const watermark = document.createElement('div');
+                        watermark.style.position = 'fixed';
+                        watermark.style.left = `${i * 10}%`;
+                        watermark.style.top = `${j * 10}%`;
+                        watermark.style.transform = 'rotate(-45deg)';
+                        watermark.style.color = 'rgba(0,0,0,0.005)';
+                        watermark.style.fontSize = '12px';
+                        watermark.style.fontWeight = 'bold';
+                        watermark.style.zIndex = '999999';
+                        watermark.style.pointerEvents = 'none';
+                        watermark.innerText = 'USPF RESEARCH REPOSITORY';
+                        document.body.appendChild(watermark);
+                    }
+                }
+            }
+            
+            // Apply anti-screenshot protection when the page loads
+            document.addEventListener('DOMContentLoaded', applyAntiScreenshotProtection);
         </script>
     </body>
 </html>

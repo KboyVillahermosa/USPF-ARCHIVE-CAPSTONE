@@ -23,7 +23,7 @@
                                 Academic Writing
                             </a>
                             <a href="#templates" class="bg-white text-blue-700 px-4 py-2 rounded-full text-sm font-medium hover:bg-blue-50 transition">
-                                Templates
+                                Template
                             </a>
                             <a href="#videos" class="bg-white text-blue-700 px-4 py-2 rounded-full text-sm font-medium hover:bg-blue-50 transition">
                                 Video Tutorials

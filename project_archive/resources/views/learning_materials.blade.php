@@ -242,7 +242,7 @@
                                         <div>
                                             <h4 class="font-medium text-gray-900 mb-1">Avoiding Plagiarism</h4>
                                             <p class="text-sm text-gray-600 mb-1">Guidelines for proper citation and academic integrity</p>
-                                            <a href="#" class="text-green-600 text-sm">Read Guide →</a>
+                                            <a href="https://www.law.nova.edu/online/files/AvoidingPlagiarismAndUnderstandingAcademicIntegrity2012.pdf" target="_blank" class="text-green-600 text-sm">Read Guide →</a>
                                         </div>
                                     </div>
                                     <div class="bg-white p-4 rounded-lg shadow-sm flex">
@@ -254,7 +254,7 @@
                                         <div>
                                             <h4 class="font-medium text-gray-900 mb-1">Literature Review Writing</h4>
                                             <p class="text-sm text-gray-600 mb-1">How to write comprehensive literature reviews</p>
-                                            <a href="#" class="text-green-600 text-sm">Read Guide →</a>
+                                            <a href="https://www.sjsu.edu/writingcenter/docs/handouts/Literature%20Reviews.pdf" target="_blank" class="text-green-600 text-sm">Read Guide →</a>
                                         </div>
                                     </div>
                                     <div class="bg-white p-4 rounded-lg shadow-sm flex">
@@ -266,7 +266,7 @@
                                         <div>
                                             <h4 class="font-medium text-gray-900 mb-1">Scientific Writing Style</h4>
                                             <p class="text-sm text-gray-600 mb-1">Best practices for clarity and precision</p>
-                                            <a href="#" class="text-green-600 text-sm">Read Guide →</a>
+                                            <a href="https://ecorrector.com/enhancing-the-quality-of-scientific-writing-tips-and-strategies-for-improving-the-clarity-and-impact/" target="_blank" class="text-green-600 text-sm">Read Guide →</a>
                                         </div>
                                     </div>
                                 </div>

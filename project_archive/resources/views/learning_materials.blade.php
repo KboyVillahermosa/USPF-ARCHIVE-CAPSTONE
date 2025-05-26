@@ -23,7 +23,7 @@
                                 Academic Writing
                             </a>
                             <a href="#templates" class="bg-white text-blue-700 px-4 py-2 rounded-full text-sm font-medium hover:bg-blue-50 transition">
-                                Template
+                                Templates
                             </a>
                             <a href="#videos" class="bg-white text-blue-700 px-4 py-2 rounded-full text-sm font-medium hover:bg-blue-50 transition">
                                 Video Tutorials
@@ -194,17 +194,34 @@
                                     <div class="bg-white p-3 rounded-lg shadow-sm">
                                         <h4 class="font-medium text-gray-900 mb-1">APA Style (7th Edition)</h4>
                                         <p class="text-sm text-gray-600 mb-2">American Psychological Association format</p>
-                                        <a href="#" class="text-amber-600 text-sm flex items-center">Download Guide <svg class="ml-1 w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg></a>
+                                        <a href="{{ asset('guides/apa7th.pdf') }}" download="APA_Style_Guide.pdf" class="text-amber-600 text-sm flex items-center">
+                                            Download Guide 
+                                            <svg class="ml-1 w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        </a>
                                     </div>
+
                                     <div class="bg-white p-3 rounded-lg shadow-sm">
                                         <h4 class="font-medium text-gray-900 mb-1">MLA Style (9th Edition)</h4>
                                         <p class="text-sm text-gray-600 mb-2">Modern Language Association format</p>
-                                        <a href="#" class="text-amber-600 text-sm flex items-center">Download Guide <svg class="ml-1 w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg></a>
+                                        <a href="{{ asset('guides/mla9th.pdf') }}" download="MLA_Style_Guide.pdf" class="text-amber-600 text-sm flex items-center">
+                                            Download Guide 
+                                            <svg class="ml-1 w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        </a>
                                     </div>
+
                                     <div class="bg-white p-3 rounded-lg shadow-sm">
                                         <h4 class="font-medium text-gray-900 mb-1">IEEE Citation Style</h4>
                                         <p class="text-sm text-gray-600 mb-2">Institute of Electrical and Electronics Engineers format</p>
-                                        <a href="#" class="text-amber-600 text-sm flex items-center">Download Guide <svg class="ml-1 w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg></a>
+                                        <a href="{{ asset('guides/ieee.pdf') }}" download="IEEE_Citation_Guide.pdf" class="text-amber-600 text-sm flex items-center">
+                                            Download Guide 
+                                            <svg class="ml-1 w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        </a>
                                     </div>
                                 </div>
                             </div>

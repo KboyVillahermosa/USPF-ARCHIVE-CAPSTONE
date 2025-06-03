@@ -3,7 +3,7 @@
 <!-- HEADER STYLE: CLASSIC -->
 <div align="center">
 
-<img src="" width="30%" style="position: relative; top: 0; right: 0;" alt="Project Logo"/>
+
 
 # USPF-ARCHIVE-CAPSTONE
 
